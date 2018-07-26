@@ -1,0 +1,61 @@
+@font-face {
+font-family: 'free3of9';
+src: url('../fonts/free3of9.eot');
+src: url('../fonts/free3of9.eot') format('embedded-opentype'),
+	 url('../fonts/free3of9.woff2') format('woff2'),
+	 url('../fonts/free3of9.woff') format('woff'),
+	 url('../fonts/free3of9.ttf') format('truetype'),
+	 url('../fonts/free3of9.svg#free3of9') format('svg');
+}
+
+
+@font-face {
+    font-family: 'NafeesRegular';
+    src: url('../fonts/NafeesRegular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+.nastaleeq, #name_in_urdu_text{font-family: 'NafeesRegular'; direction:rtl; unicode-bidi: embed;   }
+
+@font-face { 
+    font-family: IDAutomationHC39M;  
+    src: url(../fonts/BarcodeFont.ttf);
+    }
+body{
+	margin:0;
+	
+}
+.wrapper{ width: 1.34in; height:1.13in; overflow:hidden; box-sizing: border-box; background-color:#f1f1f1; text-align:center; float:left; margin-left:50px;}
+img{  /*max-height:100%;width: 170px;*/
+padding-top: 6px;}
+span{ display:block;}
+span.barcode{ font-family: 'free3of9';font-size: 20px;padding-top: 0;}
+span.number {
+       font-family: monospace;
+    letter-spacing: 10px;
+    padding-left: 0px;
+    font-weight: bold;
+}
+.barcode_num{ text-align:center;}
+span.item_name {
+	
+	
+
+font-weight: bold;
+font-size: 16px;
+font-family:Arial, Helvetica, sans-serif;
+}
+span.item_name.price{ font-size:16px;
+margin-top: 1px;
+}
+
+span.item_name.quantity{ font-size:12px;
+margin-top: 1px;
+float: right;
+margin-right: 20px;
+}
+
+
+
+
