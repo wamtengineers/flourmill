@@ -49,7 +49,7 @@ if(!defined("APP_START")) die("No Direct Access");
                     </select>
                 </div>
                 <div class="col-sm-2">
-                  <input type="text" title="Enter String" value="<?php echo $q;?>" name="q" id="search" class="form-control" placeholder="Search Customer" >  
+                  <input type="text" title="Enter String" value="<?php echo $q;?>" name="q" id="search" class="form-control" placeholder="Search Items" >  
                 </div>
                 <div class="col-sm-2 text-left">
                     <input type="button" class="btn btn-danger btn-l reset_search" value="Reset" alt="Reset Record" title="Reset Record" />

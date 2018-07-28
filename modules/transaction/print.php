@@ -33,7 +33,7 @@ table {
 </style>
 <table width="100%" cellspacing="0" cellpadding="0">
 <tr class="head">
-	<th colspan="5">
+	<th colspan="7">
     	<h1><?php echo get_config( 'site_title' )?></h1>
     	<h2>Fund Transfer List</h2>
         <p>
@@ -64,6 +64,7 @@ table {
     <th width="15%">Account To</th>
     <th width="15%">Account From</th>
     <th width="10%">Ammount</th>
+    <th width="20%">Details</th>
     <th width="10%">Added By</th>
 </tr>
 <?php
@@ -75,10 +76,10 @@ if( numrows( $rs ) > 0 ) {
 		<tr>
         	<td align="center"><?php echo $sn++?></td>
             <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
-           	<td><?php if($r["account_id"]==0) echo "Cash"; else echo get_field($r["account_id"], "account","title");?></td>
-            <td><?php if($r["reference_id"]==0) echo "Default"; else echo get_field($r["reference_id"], "account","title");?></td>
-            
+           	<td><?php echo get_field($r["account_id"], "account","title");?></td>
+            <td><?php echo get_field($r["reference_id"], "account","title");?></td>
             <td align="right"><?php echo curr_format(unslash($r["amount"])); ?></td>
+            <td><?php echo unslash($r["details"]); ?></td>
             <td><?php echo get_field( unslash($r["added_by"]), "admin", "username" ); ?></td>
         </tr>
 		<?php
@@ -86,9 +87,9 @@ if( numrows( $rs ) > 0 ) {
 }
 ?>
 <tr>
-    <td colspan="4" style="text-align:right;">Total</td>
-    <td style="text-align:right;"><?php echo curr_format($amount);?></td>
-    <td></td>
+    <th colspan="4" style="text-align:right;">Total</th>
+    <th style="text-align:right;"><?php echo curr_format($amount);?></th>
+    <th colspan="2"></th>
 </tr>
 </table>
 <?php

@@ -31,7 +31,7 @@ table {
 </style>
 <table width="100%" cellspacing="0" cellpadding="0">
 <tr class="head">
-	<th colspan="6">
+	<th colspan="7">
     	<h1><?php echo get_config( 'site_title' )?></h1>
     	<h2>Expense List</h2>
         <p>

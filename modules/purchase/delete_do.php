@@ -10,7 +10,7 @@ if(isset($_GET["id"]) && !empty($_GET["id"])){
 			doquery( "delete from transaction where id = '".$purchase[ "transaction_id" ]."'", $dblink );
 		}
 		if( $purchase[ "brokery_id" ] > 0 ) {
-			doquery( "delete from expense where id = '".$purchase[ "brokery_id" ]."'", $dblink );
+			doquery( "delete from transaction where id = '".$purchase[ "brokery_id" ]."'", $dblink );
 		}
 		if( $purchase[ "fare_transaction_id" ] > 0 ) {
 			doquery( "delete from ".($purchase[ "cnf" ]==0?"expense":"transaction")." where id = '".$purchase[ "fare_transaction_id" ]."'", $dblink );

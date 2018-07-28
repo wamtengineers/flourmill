@@ -10,7 +10,7 @@ if(isset($_GET["id"]) && !empty($_GET["id"])){
 			doquery( "update transaction set status='".$status."' where id = '".$rec[ "transaction_id" ]."'", $dblink );
 		}
 		if( $rec[ "brokery_id" ] > 0 ) {
-			doquery( "update expense set status='".$status."' where id = '".$rec[ "brokery_id" ]."'", $dblink );
+			doquery( "update transaction set status='".$status."' where id = '".$rec[ "brokery_id" ]."'", $dblink );
 		}
 		if( $rec[ "fare_transaction_id" ] > 0 ) {
 			doquery( "update ".($rec[ "cnf" ]==0?"expense":"transaction")." set status='".$status."' where id = '".$rec[ "fare_transaction_id" ]."'", $dblink );

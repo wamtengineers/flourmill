@@ -69,12 +69,7 @@ $(document).scannerDetection({
 			$item_found = false;
 			$(".item_select").each(function(){
 				$this = $( this );
-				if( !$item_found && $this.val() == barcode ) {
-					$quantity = $this.parents('.sale_item').find(".quantity");
-					$quantity.val(parseInt($quantity.val())+1);
-					$quantity.trigger("change");
-					$item_found = true;
-				}
+				
 				if( !$item_found && $this.val() == "" ) {
 					$option = $this.find("option[value="+barcode+"]");
 					if( $option.length > 0 ) {
@@ -84,25 +79,7 @@ $(document).scannerDetection({
 					}
 				}
 			});
-			if( !$item_found ) {
-				$(".sale_item").last().find(".add_list_item").trigger("click");
-				setTimeout( function(){
-					$this = $(".sale_item").last().find(".item_select");
-					$option = $this.find("option[value="+barcode+"]");
-					if( $option.length > 0 ) {
-						$option.prop( "selected", true );
-						$this.trigger( 'change' );
-						$item_found = true;
-					}
-				}, 100);
-			}
-			if( $( "#item_number2" ).length > 0 ) {
-				
-				console.log(barcode);
-				$( "#item_number2" ).val( barcode );
-				setTimeout( function(){var e = jQuery.Event("keypress");
-				e.which = 13; $( "#item_number2" ).trigger( e ); }, 101);
-			}
+			
 		}
     }
 });
@@ -146,8 +123,8 @@ $(document).ready(function() {
 <script type="text/javascript" src="js/datetimepicker.js"></script>
 <script type="text/javascript" src="js/pos.angular.js"></script>
 <script type="text/javascript" src="js/addedit.angular.js"></script>
-<script type="text/javascript" src="js/sales-return.angular.js"></script>
-<script type="text/javascript" src="js/purchase.angular.js"></script>
+<script type="text/javascript" src="js/gatepass.angular.js"></script>
+
 
 <!-- EXTERNAL SCRIPTS FOR CALLMENICK.COM, PLEASE DO NOT INCLUDE -->
 <script>

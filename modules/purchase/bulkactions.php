@@ -23,7 +23,7 @@ if(isset($_GET["action"]) && $_GET["action"]!=""){
 						doquery( "delete from transaction where id = '".$purchase[ "transaction_id" ]."'", $dblink );
 					}
 					if( $purchase[ "brokery_id" ] > 0 ) {
-						doquery( "delete from expense where id = '".$purchase[ "brokery_id" ]."'", $dblink );
+						doquery( "delete from transaction where id = '".$purchase[ "brokery_id" ]."'", $dblink );
 					}
 					if( $purchase[ "fare_transaction_id" ] > 0 ) {
 						doquery( "delete from ".($purchase[ "cnf" ]==0?"expense":"transaction")." where id = '".$purchase[ "fare_transaction_id" ]."'", $dblink );
@@ -45,7 +45,7 @@ if(isset($_GET["action"]) && $_GET["action"]!=""){
 						doquery( "update transaction set status=1 where id = '".$rec[ "transaction_id" ]."'", $dblink );
 					}
 					if( $rec[ "brokery_id" ] > 0 ) {
-						doquery( "update expense set status=1 where id = '".$rec[ "brokery_id" ]."'", $dblink );
+						doquery( "update transaction set status=1 where id = '".$rec[ "brokery_id" ]."'", $dblink );
 					}
 					if( $rec[ "fare_transaction_id" ] > 0 ) {
 						doquery( "update ".($rec[ "cnf" ]==0?"expense":"transaction")." set status=1 where id = '".$rec[ "fare_transaction_id" ]."'", $dblink );
@@ -67,7 +67,7 @@ if(isset($_GET["action"]) && $_GET["action"]!=""){
 						doquery( "update transaction set status=0 where id = '".$rec[ "transaction_id" ]."'", $dblink );
 					}
 					if( $rec[ "brokery_id" ] > 0 ) {
-						doquery( "update expense set status=0 where id = '".$rec[ "brokery_id" ]."'", $dblink );
+						doquery( "update transaction set status=0 where id = '".$rec[ "brokery_id" ]."'", $dblink );
 					}
 					if( $rec[ "fare_transaction_id" ] > 0 ) {
 						doquery( "update ".($rec[ "cnf" ]==0?"expense":"transaction")." set status=0 where id = '".$rec[ "fare_transaction_id" ]."'", $dblink );
@@ -89,7 +89,7 @@ if(isset($_GET["action"]) && $_GET["action"]!=""){
 						doquery( "update transaction set status=1 where id = '".$rec[ "transaction_id" ]."'", $dblink );
 					}
 					if( $rec[ "brokery_id" ] > 0 ) {
-						doquery( "update expense set status=1 where id = '".$rec[ "brokery_id" ]."'", $dblink );
+						doquery( "update transaction set status=1 where id = '".$rec[ "brokery_id" ]."'", $dblink );
 					}
 					if( $rec[ "fare_transaction_id" ] > 0 ) {
 						doquery( "update ".($rec[ "cnf" ]==0?"expense":"transaction")." set status=1 where id = '".$rec[ "fare_transaction_id" ]."'", $dblink );
@@ -98,7 +98,7 @@ if(isset($_GET["action"]) && $_GET["action"]!=""){
 				doquery("update purchase set status=1 where id='".$id[$i]."'",$dblink);
 				$i++;
 			}
-			header("Location: purchase_manage.php?tab=list&msg=".url_encode("Records Status Receiving."));
+			header("Location: purchase_manage.php?tab=list&msg=".url_encode("Records Status Received."));
 			die;
 		}
 	}

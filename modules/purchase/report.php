@@ -77,9 +77,13 @@ table {
 		$fov_total = 0;
 		$brokery_total = 0;
 		$balance_total = 0;
+		$total_less_weight_item = 0;
+		$rate_total = 0;
         while($r=dofetch($rs)){
             $total_items += $r["total_items"];
             $total_price += $r["total_price"];
+			$total_less_weight_item += $r["less_weight_item"];
+			$rate_total += $r["unit_price"];
             $payment_amount += $r["amount"];
 			$fov = 0;
 			$brokery = 0;
@@ -149,13 +153,13 @@ table {
     <tr>
         <th colspan="6" style="text-align:right;">Total</th>
         <th style="text-align:right;"><?php echo curr_format( $total_items );?></th>
+        <th style="text-align:right;"><?php echo curr_format( $total_less_weight_item );?></th>
+        <th style="text-align:right;"><?php echo curr_format( $total_items )-curr_format( $total_less_weight_item );?></th>
+        <th style="text-align:right;"><?php echo curr_format($rate_total);?></th>
         <th style="text-align:right;"><?php echo curr_format($total_price);?></th>
         <th style="text-align:right;"><?php echo curr_format($fov_total);?></th>
         <th style="text-align:right;"><?php echo curr_format($brokery_total);?></th>
         <th style="text-align:right;"><?php echo curr_format($balance_total);?></th>
-        <th></th>
-        <th></th>
-        <th></th>
     </tr>
 </table>
 </div>

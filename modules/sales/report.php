@@ -48,6 +48,9 @@ table {
                 if( !empty( $date_to ) ){
                     echo " to ".$date_to."<br>";
                 }
+				if( !empty( $q ) ){
+                    echo " Items: ".$q."<br>";
+                }
                 if( !empty( $account_id ) ){
                     echo " Customer: ". get_field($account_id, "account","title");
                 }
@@ -61,6 +64,7 @@ table {
         <th width="10%">Token Number</th>
         <th width="15%">Customer Name</th>
         <th width="15%">Items</th>
+        <th width="8%">Packing</th>
         <th width="10%" style="text-align:right;">Total Items</th>
         <th width="10%" style="text-align:right;">Total Price</th>
         <th width="10%" style="text-align:right;">Payment Amount</th>
@@ -73,6 +77,7 @@ table {
             $total_items += $r["total_items"];
             $total_price += $r["total_price"];
             $payment_amount += $r["amount"];
+			
             ?>
             <tr>
                 <td style="text-align:center"><?php echo $sn++?></td>
@@ -81,6 +86,14 @@ table {
                 <td style="text-align:left;"><?php echo get_field($r["account_id"], "account","title");?></td>
                 <td>
                     <?php echo $r[ "items" ];?>
+                </td>
+                <td style="text-align:right;">
+                    <?php 
+						$packing = doquery("select * from sales_items where sales_id = '".$r["id"]."'", $dblink);
+						 while($pack=dofetch($packing)){
+							echo curr_format($pack["packing"]). " KG". " , ";
+						 }
+					?>
                 </td>
                 <td style="text-align:right;"><?php echo curr_format($r["total_items"]); ?></td>
                 <td style="text-align:right;"><?php echo curr_format($r["total_price"]); ?></td>
@@ -110,7 +123,7 @@ table {
     }
     ?>
     <tr>
-        <th colspan="5" style="text-align:right;">Total</th>
+        <th colspan="6" style="text-align:right;">Total</th>
         <th style="text-align:right;"><?php echo curr_format($total_items);?></th>
         <th style="text-align:right;"><?php echo curr_format($total_price);?></th>
         <th style="text-align:right;"><?php echo curr_format($payment_amount);?></th>

@@ -34,7 +34,7 @@ if(!defined("APP_START")) die("No Direct Access");
                     </select>
                 </div>
                 <div class="col-sm-3">
-                  <select name="account_id" id="account_id" class="custom_select">
+                  <select name="account_id" id="account_id" class="custom_select searchbox">
                         <option value=""<?php echo ($account_id=="")? " selected":"";?>>Select Account</option>
                         <?php
                             $res=doquery("select * from account order by id",$dblink);

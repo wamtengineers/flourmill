@@ -10,6 +10,7 @@ if(!defined("APP_START")) die("No Direct Access");
     	<div class="btn-group" role="group" aria-label="..."> 
         	<a href="transaction_manage.php?tab=add" class="btn btn-light editproject">Add New Transaction</a> 
             <a id="topstats" class="btn btn-light" href="#"><i class="fa fa-search"></i></a> 
+            <a class="btn print-btn" href="transaction_manage.php?tab=print"><i class="fa fa-print" aria-hidden="true"></i></a>  
     	</div> 
     </div> 
 </div>
@@ -18,7 +19,7 @@ if(!defined("APP_START")) die("No Direct Access");
     	<div>
         	<form class="form-horizontal" action="" method="get">
             	<div class="col-sm-3 margin-btm-5">
-                	<select name="account_id" id="account_id" class="custom_select">
+                	<select name="account_id" id="account_id" title="Choose Account To" class="custom_select searchbox">
                         <option value=""<?php echo ($account_id=="")? " selected":"";?>>Select Account To</option>
                         <?php
                             $res=doquery("select * from account order by title",$dblink);
@@ -33,7 +34,7 @@ if(!defined("APP_START")) die("No Direct Access");
                     </select>
                 </div>
             	<div class="col-sm-3 margin-btm-5">
-                	<select name="reference_id" id="reference_id" title="Choose Option">
+                	<select name="reference_id" id="reference_id" title="Choose Account From" class="custom_select searchbox">
                         <option value=""<?php echo ($reference_id=="")? " selected":"";?>>Select Account From</option>
                         <?php
                             $res=doquery("select * from account order by title",$dblink);
@@ -93,8 +94,8 @@ if(!defined("APP_START")) die("No Direct Access");
                             <label for="<?php echo "rec_".$sn?>"></label></div>
                         </td>
                         <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
-                        <td><?php if($r["account_id"]==0) echo "Cash"; else echo get_field($r["account_id"], "account","title");?></td>
-                        <td><?php if($r["reference_id"]==0) echo "Default"; else echo get_field($r["reference_id"], "account","title");?></td>
+                        <td><?php echo get_field($r["account_id"], "account","title");?></td>
+                        <td><?php echo get_field($r["reference_id"], "account","title");?></td>
                         <td class="text-right"><?php echo curr_format(unslash($r["amount"])); ?></td>
                         <td><?php echo unslash($r["details"]); ?></td>
                         <td><?php echo get_field( unslash($r["added_by"]), "admin", "username" ); ?></td>

@@ -94,7 +94,7 @@ if( isset( $_SESSION["purchase"]["list"]["order"] ) ){
 }
 $orderby = $order_by." ".$order;
 $sql="select * from (select a.*, b.title, amount, (select sum((quantity-less_weight)*if(rate=0,packing,1)) from purchase_items where purchase_id = a.id)-less_weight as total_items, (select group_concat(concat(quantity, ' &times ', packing, 'KG ', title) SEPARATOR '<br>') from purchase_items left join items on purchase_items.item_id = items.id where purchase_id = a.id) as items, (select sum(total_price) from purchase_items where purchase_id = a.id)-discount as total_price from purchase a left join account b on a.account_id = b.id left join transaction c on a.transaction_id = c.id ) as temp_table where 1 $extra order by $orderby";
-$sql="select a.*, b.*, b.quantity as total_items, b.total_price as total_price, c.title as items, b.less_weight as less_weight_item, amount from purchase a inner join purchase_items b on a.id = b.purchase_id left join items c on b.item_id = c.id left join transaction d on a.transaction_id = d.id where 1 $extra order by $orderby";
+$sql="select a.*, b.packing, b.unit_price, b.quantity as total_items, b.total_price as total_price, c.title as items, b.less_weight as less_weight_item, amount from purchase a inner join purchase_items b on a.id = b.purchase_id left join items c on b.item_id = c.id left join transaction d on a.transaction_id = d.id where 1 $extra order by $orderby";
 switch($tab){
 	case 'addedit':
 		include("modules/purchase/addedit_do.php");

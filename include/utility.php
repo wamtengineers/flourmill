@@ -1317,10 +1317,6 @@ function get_account_balance( $account_id, $datetime = "" ){
 	$balance = $balance + $balance_transactions[ "balance" ];
 	$expense = dofetch( doquery( "select sum(amount) as total from expense where status=1 and account_id = '".$account_id."' and datetime_added<='".$datetime."'", $dblink ) );
 	$balance -= $expense[ "total" ];
-	/*$customer_payment = dofetch( doquery( "select sum(amount) as total from customer_payment where status=1 and account_id = '".$account_id."' and datetime_added<='".$datetime."'", $dblink ) );
-	$balance += $customer_payment[ "total" ];
-	$supplier_payment = dofetch( doquery( "select sum(amount) as total from supplier_payment where status=1 and account_id = '".$account_id."' and datetime_added<='".$datetime."'", $dblink ) );
-	$balance -= $supplier_payment[ "total" ];*/
 	return $balance;
 }
 

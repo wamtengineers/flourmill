@@ -43,7 +43,7 @@ if(!defined("APP_START")) die("No Direct Access");
                 <div class="col-sm-2">
                 	<select name="status" id="status" class="custom_select">
                     	<option value="1"<?php echo ($status=="1")? " selected":"";?>>Arrived</option>
-                    	<option value="2"<?php echo ($status=="2")? " selected":"";?>>Receiving</option>
+                    	<option value="2"<?php echo ($status=="2")? " selected":"";?>>Received</option>
                         
                         <option value="0"<?php echo ($status=="0")? " selected":"";?>>Cancelled</option>
                     </select>
@@ -201,7 +201,7 @@ if(!defined("APP_START")) die("No Direct Access");
 							}
 							elseif($r["status"]==2){
 								?>
-								<span class="order-status deliver">Receiving</span>
+								<span class="order-status deliver">Received</span>
 								<?php
 							}
 							?>
@@ -223,7 +223,7 @@ if(!defined("APP_START")) die("No Direct Access");
                             <option value="delete">Delete</option>
                             <option value="statuson">Set Status Arrived</option>
                             <option value="statusof">Set Status Cancelled</option>
-                            <option value="statusrec">Set Status Receiving</option>
+                            <option value="statusrec">Set Status Received</option>
                         </select>
                         <input type="button" name="apply" value="Apply" id="apply_bulk_action" class="btn btn-light" title="Apply Action"  />
                     </td>

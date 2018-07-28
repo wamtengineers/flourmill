@@ -69,14 +69,14 @@ if( empty( $extra ) ) {
 <div class="panel-body table-responsive">
 	<table class="table table-hover list">
     	<?php
-		$sql="select (select sum(total_price) from sales_items)-sum(discount) as total from sales where status = 1 $extra";
+		$sql="select sum(b.total_price)-sum(a.discount) as total from sales a left join sales_items b on a.id = b.sales_id where a.status = 1 $extra";
 		$sale_total=dofetch(doquery($sql, $dblink));
-		$sql="select (select sum(total_price) from purchase_items)-sum(discount) as total, sum(discount) as discount from purchase where status = 1 $extra";
+		$sql="select sum(b.total_price)-sum(a.discount) as total from purchase a left join purchase_items b on a.id = b.purchase_id where a.status = 1 $extra";
 		$purchase_total=dofetch(doquery($sql, $dblink));
-		$sql="select (select sum(total_price) from sales_return_items)-sum(discount) as total from sales_return where status = 1 $extra";
+		$sql="select sum(b.total_price)-sum(a.discount) as total from sales_return a left join sales_return_items b on a.id = b.sales_return_id where a.status = 1 $extra";
 		$sale_return_total=dofetch(doquery($sql, $dblink));
-		/*$sql="select sum(b.total_price) as sale_price, sum(c.unit_price) as purchase_price from sales a left join sales_items b on a.id = b.sales_id left join items c on b.item_id = c.id where a.status = 1 $extra";
-		$revenue=dofetch(doquery($sql, $dblink));*/
+		$sql="select sum(b.total_price)-sum(a.discount) as total from purchase_return a left join purchase_return_items b on a.id = b.purchase_return_id where a.status = 1 $extra";
+		$purchase_return_total=dofetch(doquery($sql, $dblink));
 		?>
         <tr class="head">
             <th class="text-right">Sale from <?php echo $date_from?> to <?php echo $date_to?></th>
@@ -87,12 +87,16 @@ if( empty( $extra ) ) {
             <th class="text-right" ><?php echo curr_format($purchase_total[ "total" ])?></th>
         </tr>
         <tr class="head">
-            <th class="text-right">Sale Return <?php echo $date_from?> to <?php echo $date_to?></th>
+            <th class="text-right">Sale Return from <?php echo $date_from?> to <?php echo $date_to?></th>
             <th class="text-right" ><?php echo curr_format(-$sale_return_total[ "total" ])?></th>
+        </tr>
+        <tr class="head">
+            <th class="text-right">Purchase Return from <?php echo $date_from?> to <?php echo $date_to?></th>
+            <th class="text-right" ><?php echo curr_format($purchase_return_total[ "total" ])?></th>
         </tr>
         <tr class="bg-success">
             <th class="text-right">Revenue <?php echo $date_from?> to <?php echo $date_to?></th>
-            <th class="text-right" ><?php echo curr_format($sale_total[ "total" ]-$sale_return_total[ "total" ])?></th>
+            <th class="text-right" ><?php echo curr_format($sale_total[ "total" ]-$purchase_total[ "total" ]-$sale_return_total[ "total" ]+$purchase_return_total[ "total" ])?></th>
         </tr>
         <?php
 		$total = 0;
@@ -117,7 +121,7 @@ if( empty( $extra ) ) {
         </tr>
         <tr class="head bg-success">
             <th class="text-right">Net Income</th>
-            <th class="text-right" ><?php echo curr_format($sale_total[ "total" ]-$sale_return_total[ "total" ]-$total)?></th>
+            <th class="text-right" ><?php echo curr_format($sale_total[ "total" ]-$purchase_total[ "total" ]-$total)?></th>
         </tr>	
   	</table>
 </div>

@@ -86,7 +86,7 @@ else {
             </div>
             <div class="col-sm-10">
                 <select class="margin-btm-5" ng-model="addedit.status" chosen>
-                    <option value="2"><?php echo $manage_url == 'purchase_manage.php' || $manage_url == 'sales_return_manage.php'?'Receiving':'Delivering'?></option>
+                    <option value="2"><?php echo $manage_url == 'purchase_manage.php' || $manage_url == 'sales_return_manage.php'?'Received':'Delivering'?></option>
                    	<option value="1"><?php echo $manage_url == 'purchase_manage.php' || $manage_url == 'sales_return_manage.php'?'Arrived':'Dispatched'?></option>
                     <option value="0">Cancelled</option>
                 </select>
@@ -225,7 +225,7 @@ else {
                                    					</select></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Payment Amount</th>
+                                                    <th>Payment Amount <i class="fa fa-refresh" ng-click="addedit.payment_amount=grand_total()-addedit.discount"></i></th>
                                                     <td><input type="text" style="text-align:right; width: 100%" ng-model="addedit.payment_amount" /></td>
                                                 </tr>
                                           	</table>

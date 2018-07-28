@@ -143,6 +143,16 @@ if( count( $_POST ) > 0 ) {
 			break;
 			case "update_order":
 				doquery( "update ".$module." set status = '".$status."' where id = '".$id."'", $dblink );
+				$update_order = dofetch(doquery( "select * from ".$module." where id = '".$id."'", $dblink ));
+				if( $update_order[ "transaction_id" ] > 0 ) {
+					doquery( "update transaction set status = '".$status."' where id = '".$update_order["transaction_id"]."'", $dblink );
+				}
+				if( $update_order[ "brokery_id" ] > 0 ) {
+					doquery( "update ".($update_order[ "cnf" ]==1?"expense":"transaction")." set status='".$status."' where id = '".$update_order[ "brokery_id" ]."'", $dblink );
+				}
+				if( $update_order[ "fare_transaction_id" ] > 0 ) {
+					doquery( "update ".($update_order[ "cnf" ]==1?"expense":"transaction")." set status='".$status."' where id = '".$update_order[ "fare_transaction_id" ]."'", $dblink );
+				}
 			break;
 			case "get_accounts":
 				$rs = doquery( "select a.*, b.title as account_type from account a left join account_type b on a.account_type_id = b.id where a.status=1 and b.status = 1 order by b.sortorder, a.title", $dblink );
@@ -193,22 +203,91 @@ if( count( $_POST ) > 0 ) {
 				}
 				$response = $expense_categories;
 			break;
-			case "get_transactions":
-				$rs = doquery( "select * from transaction where datetime_added>'".$from."' and datetime_added<='".$to."' and status = 1 order by datetime_added desc, id desc", $dblink );
-				$transactions = array();
+			case "get_expense":
+				$rs = doquery( "select * from expense where datetime_added>'".$from."' and datetime_added<='".$to."' and status = 1 order by datetime_added desc, id desc", $dblink );
+				$expense = array();
 				if( numrows( $rs ) > 0 ) {
 					while( $r = dofetch( $rs ) ) {
-						$transactions[] = array(
+						$expense[] = array(
 							"id" => $r[ "id" ],
 							"account_id" => $r[ "account_id" ],
-							"account_id" => $r[ "account_id" ],
+							"expense_category_id" => $r[ "expense_category_id" ],
 							"datetime_added" => date("h:i A", strtotime($r[ "datetime_added" ])),
 							"amount" => $r[ "amount" ],
 							"details" => unslash( $r[ "details" ] )
 						);
 					}
 				}
-				$response = $transactions;
+				$response = $expense;
+			break;
+			case "add_expense":
+				$expense = json_decode( $expense );
+				if( !empty( $expense->expense_category_id ) && !empty( $expense->account_id ) && !empty( $expense->amount ) ) {
+					doquery("insert into expense(datetime_added, expense_category_id, details, amount, account_id, added_by) values(NOW(), '".slash($expense->expense_category_id)."', '".slash($expense->details)."', '".slash($expense->amount)."', '".slash($expense->account_id)."', '".$_SESSION["logged_in_admin"]["id"]."')", $dblink);
+					$id = inserted_id();
+					$r = dofetch(doquery("select * from expense where id ='".$id."'", $dblink));
+					$expense = array(
+						"id" => $r[ "id" ],
+						"datetime_added" => date("h:i A", strtotime($r[ "datetime_added" ])),
+						"expense_category_id" => get_field( unslash($r["expense_category_id"]), "expense_category", "title" ),
+						"details" => unslash($r[ "details" ]),
+						"amount" => unslash($r[ "amount" ]),
+						"account_id" => $r["account_id"],
+					);
+					$response = array(
+						"status" => 1,
+						"expense" => $expense
+					);
+				}
+				else{
+					$response = array(
+						"status" => 0,
+						"message" => "Enter Category, Account and Amount"
+					);
+				}				
+			break;
+			case "get_transactions":
+				$rs = doquery( "select * from transaction where datetime_added>'".$from."' and datetime_added<='".$to."' and status = 1 order by datetime_added desc, id desc", $dblink );
+				$transaction = array();
+				if( numrows( $rs ) > 0 ) {
+					while( $r = dofetch( $rs ) ) {
+						$transaction[] = array(
+							"id" => $r[ "id" ],
+							"account_id" => $r[ "account_id" ],
+							"reference_id" => $r[ "reference_id" ],
+							"datetime_added" => date("h:i A", strtotime($r[ "datetime_added" ])),
+							"amount" => $r[ "amount" ],
+							"details" => unslash( $r[ "details" ] )
+						);
+					}
+				}
+				$response = $transaction;
+			break;
+			case "add_transaction":
+				$transaction = json_decode( $transaction );
+				if( !empty( $transaction->account_id ) && !empty( $transaction->reference_id ) && !empty( $transaction->amount ) ) {
+					doquery("insert into transaction (datetime_added, account_id, reference_id, details, amount, added_by) values(NOW(), '".slash($transaction->account_id)."', '".slash($transaction->reference_id)."', '".slash($transaction->details)."', '".slash($transaction->amount)."', '".$_SESSION["logged_in_admin"]["id"]."')", $dblink);
+					$id = inserted_id();
+					$r = dofetch(doquery("select * from transaction where id ='".$id."'", $dblink));
+					$transaction = array(
+						"id" => $r[ "id" ],
+						"datetime_added" => date("h:i A", strtotime($r[ "datetime_added" ])),
+						"reference_id" => $r["reference_id"],
+						"details" => unslash($r[ "details" ]),
+						"amount" => unslash($r[ "amount" ]),
+						"account_id" => $r["account_id"],
+					);
+					$response = array(
+						"status" => 1,
+						"transaction" => $transaction
+					);
+				}
+				else{
+					$response = array(
+						"status" => 0,
+						"message" => "Enter Account and Amount"
+					);
+				}				
 			break;
 		}
 	}
