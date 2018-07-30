@@ -60,15 +60,7 @@ include("modules/dashboard/ajax.php");
                                         	<span class="order-status" ng-if="module=='sales'" ng-class="[{'wct_tab_danger': order.status==0}, {'wct_tab_sales': order.status==1}]">{{ order.status==0?'Cancelled':(order.status==1?'Dispatched':(order.status==2?'Delivering':'Cancelled')) }}</span>
                                         </td>
                                         <td class="text-center">
-                                        	<a href="" title="{{ module=='sales'?'Dispatch':'Receive'}} Order" class="dispatch-order" ng-click="set_status(order.id, 1, module)" ng-if="order.status==2"><i class="fa fa-check" aria-hidden="true"></i></a>
-                                            <a href="" title="Cancel Order" class="cancel-order" ng-click="set_status(order.id, 0, module)" ng-if="order.status!=0"><i class="fa fa-close" aria-hidden="true"></i></a>
-                                            <a href="" title="Make Delivering Order" class="activate-order" ng-click="set_status(order.id, 2, module)" ng-if="order.status==0"><i class="fa fa-check-square" aria-hidden="true"></i></a>
-                                            <div class=""><?php if( $_SESSION[ "logged_in_admin" ][ "admin_type_id" ] == 1 ){?><a href="" class="" ng-click="order_detail()" title="Print"><i class="fa fa-print" aria-hidden="true"></i></a><?php } ?></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                    	<td colspan="10">
-                                        	<div id="order_detail" style="display:none">jgjggj </div>
+                                            <div class=""><a href="" class="" ng-click="order_detail()" title="Print">View Order</a></div>
                                         </td>
                                     </tr>
                                     <tr ng-show="get_orders( module ).length == 0" class="alert-danger">
@@ -77,7 +69,24 @@ include("modules/dashboard/ajax.php");
                                 </table>
                             </div>
                         </div>
-                        
+                        <div id="order_detail"> 
+                        	<div class="head">
+                            	<h1>Ghouri Flour Mill</h1>
+                            </div>
+                            <div class="text-center"><div class="token-number">Token Number: <strong>35</strong></div></div>
+                            <div class="barcode_num">
+                                <span class="barcode"><img src="barcode.php?text=222&size=30" /></span>
+                                <span class="number">222</span>
+                            </div>
+                            <p>Date/Time: <strong style="float:right">28/07/2018 7.00 PM</strong></p>
+                            <table width="100%" cellpadding="0" cellspacing="0" class="table table-hover list">
+                                <tr class="bg-success">
+                                    <td class="text-center">
+                                    	<span class="item-name">Meida</span> &times; <span class="qty">20</span> 39.5 KG
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

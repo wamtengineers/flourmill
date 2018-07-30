@@ -3,9 +3,6 @@ angular.module('gatepass', ['ngAnimate', 'angularMoment', 'localytics.directives
 		$scope.items = [];
 
 		$scope.sales_orders = [];
-		$scope.transactions = [];
-		$scope.expenses = []
-		$scope.expense_categories = [];
 		$scope.credit_accounts = {
 			"sales": []
 		}
@@ -35,23 +32,7 @@ angular.module('gatepass', ['ngAnimate', 'angularMoment', 'localytics.directives
 		$scope.petty_cash = {};
 		$scope.daily_sale = {};
 		
-		$scope.new_order_placeholder = {
-			"id": "",
-			"discount": "",
-			"account_id": "0",
-			"less_weight": "",
-			"payment_amount": "",
-			"payment_account_id": "0",
-			"status": "",
-			"broker_amount": "",
-			"broker_account_id": "0",
-			"items": [],	
-			"fare_of_vehicle" : "",
-			"fare_of_vehicle_payment_account_id" : "0",
-			"cnf": "",
-		};	
-		
-		$scope.new_order = {};
+
 		$scope.updateDate = function(){
 			$scope.dt = $(".angular-datepicker").val();
 			$scope.$apply();
@@ -99,9 +80,7 @@ angular.module('gatepass', ['ngAnimate', 'angularMoment', 'localytics.directives
 		angular.element(document).ready(function () {
 			$scope.wctAJAX( {action: 'get_dt'}, function( response ){
 				$scope.dt = JSON.parse( response );
-				$scope.wctAJAX( {action: 'get_products'}, function( response ){
-					$scope.items = response;
-				});
+				
 				$scope.get_records( 1 );
 			});
 		});
@@ -114,20 +93,13 @@ angular.module('gatepass', ['ngAnimate', 'angularMoment', 'localytics.directives
 					for( i = 0; i < $scope.accounts.length; i++ ) {
 						if( $scope.accounts[ i ].is_petty_cash == 1 ) {
 							$scope.petty_cash = $scope.accounts[ i ];
-							$scope.new_order_placeholder.payment_account_id = $scope.petty_cash.id
-							$scope.new_order_placeholder.fare_of_vehicle_payment_account_id = $scope.petty_cash.id
-							$scope.transaction_placeholder.reference_id = $scope.petty_cash.id
-							$scope.expense_placeholder.account_id = $scope.petty_cash.id
+							
 						}
 						if( $scope.accounts[ i ].is_daily_sale == 1 ) {
 							$scope.daily_sale = $scope.accounts[ i ];
 						}
-						if( $scope.accounts[ i ].is_daily_purchase == 1 ) {
-							$scope.daily_purchase = $scope.accounts[ i ];
-						}
+						
 					}
-					$scope.new_order = angular.copy( $scope.new_order_placeholder );
-					
 				}
 			});
 			$scope.wctAJAX( {action: 'get_orders', dt: $scope.dt, module: 'sales'}, function( response ){
@@ -151,27 +123,9 @@ angular.module('gatepass', ['ngAnimate', 'angularMoment', 'localytics.directives
 				return $filter('filter')($scope[module+'_orders'], {status: 0});
 			}
 		}
-		$scope.set_status = function( order_id, status, module ) {
-			if( confirm( "Are you sure you want to change the status of this order?" ) ) {
-				$scope.wctAJAX( {action: 'update_order', id: order_id, status: status, module: module}, function( response ){
-					$filter('filter')($scope[module+"_orders"], {id: order_id})[0].status = status;
-					$scope.update_credit_account( module );
-				});
-			}
-		}
-		
 		$scope.sum = function( array, property ){
 			var total = 0;
 			for( var i =0; i < array.length; i++ ) {
-				if( typeof array[ i ][ property ] !== 'undefined' ) {
-					total += Number( array[ i ][ property ] );
-				}
-			}
-			return total;
-		}
-		$scope.sum_dynamic = function( array, position, property ){
-			var total = 0;
-			for( var i =0; i <= position; i++ ) {
 				if( typeof array[ i ][ property ] !== 'undefined' ) {
 					total += Number( array[ i ][ property ] );
 				}
@@ -201,36 +155,7 @@ angular.module('gatepass', ['ngAnimate', 'angularMoment', 'localytics.directives
 			}
 			return total;
 		}
-		$scope.update_credit_account = function( module ){
-			for( var i = 0; i < $scope[module+'_orders'].length; i++ ) {
-				if( $scope[module+'_orders'][ i ].status != 0 ) {
-					var total = $scope.sum( $scope[module+'_orders'][ i ].items, 'total_price' ) - $scope[module+'_orders'][ i ].discount-$scope[module+'_orders'][ i ].payment_amount;
-					if( total != 0 ) {
-						if( $filter( 'filter' )( $scope.credit_accounts[ module ], {id: $scope[module+'_orders'][ i ].account_id}, true ).length == 0 ) {
-							$scope.credit_accounts[ module ].push( {
-								id: angular.copy( $scope[module+'_orders'][ i ].account_id ),
-								total: total,
-							} );
-						}
-						else{
-							$filter( 'filter' )( $scope.credit_accounts[ module ], {id: $scope[module+'_orders'][ i ].account_id}, true )[0].total +=total;
-						}
-					}
-					if( $scope[module+'_orders'][ i ].payment_amount > 0 ) {
-						if( $filter( 'filter' )( $scope.debit_accounts[ module ], {id: $scope[module+'_orders'][ i ].payment_account_id}, true ).length == 0 ) {
-							$scope.debit_accounts[ module ].push( {
-								id: angular.copy( $scope[module+'_orders'][ i ].payment_account_id ),
-								total: $scope[module+'_orders'][ i ].payment_amount,
-							} );
-						}
-						else{
-							$filter( 'filter' )( $scope.debit_accounts[ module ], {id: $scope[module+'_orders'][ i ].payment_account_id}, true )[0].total += $scope[module+'_orders'][ i ].payment_amount;
-						}
-					}
-				}
-			}
-			return accounts;
-		}
+		
 		$scope.print_receipt = function( id ) {
 			$("<iframe>")
 				.hide()

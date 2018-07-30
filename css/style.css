@@ -5243,3 +5243,14 @@ table.order-item-table input, table.order-item-table select {
 .chosen-container-single .chosen-search input[type="text"]{
 	color:#333;
 }
+#order_detail{
+	max-width:75mm;
+	margin:0 auto;
+}
+#order_detail h1{ text-align:center;}
+#order_detail td{ font-size:24px; border:none !important;}
+.token-number{text-align: center;border: 1px solid #000;width: auto;display: inline-block;padding: 0 10px; margin: 0 auto;font-size: 16px;line-height: 25px;border-radius: 4px;}
+.barcode_num{ margin-top:15px; text-align:center}
+.barcode_num span{ display:block;}
+#order_detail .qty{ border:1px solid #000; border-radius:50%; padding:0 10px; line-height:45px; display:inline-block;}
+.item-name{ font-size:30px;}
