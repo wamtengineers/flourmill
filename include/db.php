@@ -3,8 +3,8 @@ error_reporting(E_ALL ^ E_DEPRECATED);
 session_start();
 $db_host="127.0.0.1";
 $db_username="root";
-$db_password="";
-$db_name="ghori";
+$db_password="Killer123";
+$db_name="wamtengineers_ghori";
 $dblink=mysqli_connect($db_host,$db_username,$db_password, $db_name);
 if (mysqli_connect_errno()){
 	echo "Failed to connect to MySQL: " . mysqli_connect_error();
