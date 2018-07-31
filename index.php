@@ -25,28 +25,26 @@ $page="index";
                 <div class="wct_tab_cashbook" ng-click="show_tab( 3 )"><span><i class="fa fa-money"></i>Cashbook</span></div>
             </div>
         </div>
-        <div class="wct_tabs">
-            <div class="wct_tab_debit"><span><i class="fa fa-shopping-cart"></i>Debit</span></div>
-            <div class="wct_tab_credit"><span><i class="fa fa-shopping-cart"></i>Credit</span></div>
-        </div>
-        <div id="item-row">
+        <div id="item-row" ng-class="{'padding-bottom': new_order.items.length>0}">
             <div class="wct_tabs_selected" ng-class="[{'wct_tab_overview': current_tab==0}, {'wct_tab_sales': current_tab==1}, {'wct_tab_purchase': current_tab==2}, {'wct_tab_cashbook': current_tab==3}]"></div>
             <div ng-if="errors.length > 0" class="errors">
                 <div ng-repeat="error in errors" class="alert alert-danger">{{error}}</div>
             </div>
             <div class="row clearfix">
                 <div class="col-md-12">
-                    <div class="item-selector" ng-show="current_tab==0">
+                	<div class="item-selector" ng-show="current_tab==0">
                     	<div id="total-sale" ng-repeat="module in ['sales', 'purchase']">
                             <h2 class="total-heading">{{ overview_tab[module]==0?'All':(overview_tab[module]==1?'Dispatched':(overview_tab[module]==2?'Delivering':'Cancelled')) }} Orders - {{ module }}
                             	<div class="innertabs">
                                 	<div class="innertab wct_tab_overview" ng-click="overview_tab[module]=0"><i class="fa fa-th-list"></i> All</div>
                                     <div class="innertab wct_tab_sales" ng-click="overview_tab[module]=1"><i class="fa fa-check-square-o"></i> <span ng-if="module=='sales'">Dispatched</span><span ng-if="module=='purchase'">Received</span></div>
+                                    <div class="innertab wct_tab_cashbook" ng-click="overview_tab[module]=4" ng-if="module=='sales'"><i class="fa fa-truck"></i> Delivered</div>
                                     <div class="innertab wct_tab_purchase" ng-click="overview_tab[module]=2"><i class="fa fa-database"></i> <span ng-if="module=='sales'">Delivering</span><span ng-if="module=='purchase'">Receiving</span></div>
+                                    <div class="innertab wct_tab_orange" ng-click="overview_tab[module]=5"><i class="fa fa-question"></i> On Hold</div>
                                     <div class="innertab wct_tab_danger" ng-click="overview_tab[module]=3"><i class="fa fa-close"></i> Cancelled</div>
                                 </div>
                             </h2>
-                            <div class="wct_innertabs_selected" ng-class="[{'wct_tab_overview': overview_tab[module]==0}, {'wct_tab_sales': overview_tab[module]==1}, {'wct_tab_purchase': overview_tab[module]==2}, {'wct_tab_danger': overview_tab[module]==3}]"></div>
+                            <div class="wct_innertabs_selected" ng-class="[{'wct_tab_overview': overview_tab[module]==0}, {'wct_tab_sales': overview_tab[module]==1}, {'wct_tab_purchase': overview_tab[module]==2}, {'wct_tab_danger': overview_tab[module]==3}, {'wct_tab_cashbook': overview_tab[module]==4}, {'wct_tab_orange': overview_tab[module]==5}]"></div>
                             <div id="cart" class="panel-body table-responsive" style="max-height: 435px;">
                                 <table width="100%" class="table table-hover list">
                                     <thead>
@@ -77,27 +75,71 @@ $page="index";
                                         <td class="text-right">{{ order.payment_amount|currency:'':0 }}</td>
                                         <td>{{ get_field( order.payment_account_id, accounts, "title" ) }}</td>
                                         <td class="text-center">
-                                        	<span class="order-status" ng-if="module=='sales'" ng-class="[{'wct_tab_danger': order.status==0}, {'wct_tab_sales': order.status==1}, {'wct_tab_purchase': order.status==2}]">{{ order.status==0?'Cancelled':(order.status==1?'Dispatched':(order.status==2?'Delivering':'Cancelled')) }}</span>
+                                        	<span class="order-status" ng-if="module=='sales'" ng-class="[{'wct_tab_danger': order.status==0}, {'wct_tab_sales': order.status==1}, {'wct_tab_purchase': order.status==2}, {'wct_tab_cashbook': order.status==3}, {'wct_tab_orange': order.status==4}]">{{ order.status==0?'Cancelled':(order.status==1?'Dispatched':(order.status==2?'Delivering':(order.status==3?'Delivered':(order.status==4?'On Hold':'Cancelled')))) }}</span>
                                         	<span class="order-status" ng-if="module=='purchase'" ng-class="[{'wct_tab_danger': order.status==0}, {'wct_tab_sales': order.status==1}, {'wct_tab_purchase': order.status==2}]">{{ order.status==0?'Cancelled':(order.status==1?'Received':(order.status==2?'Receiving':'Cancelled')) }}</span>
                                         </td>
                                         <td class="text-center">
-                                        	<a href="" title="{{ module=='sales'?'Dispatch':'Receive'}} Order" class="dispatch-order" ng-click="set_status(order.id, 1, module)" ng-if="order.status==2"><i class="fa fa-check" aria-hidden="true"></i></a>
-                                            <a href="" title="Cancel Order" class="cancel-order" ng-click="set_status(order.id, 0, module)" ng-if="order.status!=0"><i class="fa fa-close" aria-hidden="true"></i></a>
-                                            <a href="" title="Make Delivering Order" class="activate-order" ng-click="set_status(order.id, 2, module)" ng-if="order.status==0"><i class="fa fa-check-square" aria-hidden="true"></i></a>
+                                        	<a href="" title="Hold Order" class="cancel-order" ng-click="set_status(order.id, 4, module)" ng-if="order.status==2 || order.status==3"><i class="fa fa-close" aria-hidden="true"></i></a>
                                             <?php if( $_SESSION[ "logged_in_admin" ][ "admin_type_id" ] == 1 ){?><a href="" title="Print" ng-click="print_receipt(order.id)" ng-if="module=='sales' && order.status != 0"><i class="fa fa-print" aria-hidden="true"></i></a><?php } ?>
                                         </td>
                                     </tr>
                                     <tr ng-show="get_orders( module ).length == 0" class="alert-danger">
-                                    	<td colspan="9">No records found.</td>
+                                    	<td colspan="10">No records found.</td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
                     </div>
                     <div class="item-selector" ng-show="current_tab==1 || current_tab==2">
-                    	<div id="tabs" class="c-tabs no-js items-wrap clearfix">
-                            <div ng-repeat="item in items" class="c-tab is-active clearfix">
-                                <h3>{{item.title}}</h3>
+                    	<div class="row" ng-show="new_order.transaction_type==''">
+                            <div class="col-md-2">
+                            	<div class="item" ng-click="new_order.transaction_type=1">
+                                    <div class="item-img">
+                                        <div class="img-placeholder"><span>Cash {{ current_tab==1?"Sale":"Purchase" }}</span></div>
+                                  	</div>
+                               	</div>
+                            </div>
+                            <div class="col-md-2">
+                            	<div class="item" ng-click="new_order.transaction_type=2; new_order.account_id='0'">
+                                    <div class="item-img">
+                                        <div class="img-placeholder"><span>Credit {{ current_tab==1?"Sale":"Purchase" }}</span></div>
+                                  	</div>
+                               	</div>
+                            </div>                        
+                       	</div>
+                        <div id="tabs" class="c-tabs no-js items-wrap clearfix" ng-show="new_order.transaction_type==2 && new_order.account_id=='0'">
+                        	<h1 style="margin:0">Select Account</h1>
+                            <select ng-model="new_order.account_id" class="order-select-box" chosen>
+                                <option value="0">Select Account</option>
+                                <optgroup ng-repeat="account_type in account_types" label="{{ account_type.title }}">
+                                    <option ng-repeat="account in accounts|filter:{account_type_id: account_type.id}:1" value="{{account.id}}">{{account.title}}</option>
+                                </optgroup>
+                            </select>
+                       	</div>
+                    	<div id="tabs" class="c-tabs no-js items-wrap clearfix" ng-show="new_order.transaction_type!='' && new_order.account_id!='0'">
+                        	<h1 style="margin:0">{{ new_order.transaction_type==1?"Cash":"Credit" }} {{ current_tab==1?"Sale":"Purchase" }}</h1>
+                            <button class="btn btn-primary" ng-click="new_order.transaction_type=''" style="margin-bottom:20px;">
+                            	Back
+                            </button>
+                            <div class="c-tab is-active clearfix" ng-show="new_order.transaction_item===''">
+                            	<div class="row">
+                                    <div ng-repeat="item in items">
+                                    	<div class="col-md-2">
+                                            <div class="item" ng-click="new_order.transaction_item=$index">
+                                                <div class="item-img">
+                                                    <div class="img-placeholder"><span>{{ item.title }}</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                               	</div>
+                            </div>
+                            <div ng-repeat="item in items" class="c-tab is-active clearfix" ng-show="new_order.transaction_item===$index">
+                                <h3>{{item.title}}
+                                	<button class="btn btn-primary" ng-click="new_order.transaction_item=''" style="float: right">
+                                        Back
+                                    </button>
+                                </h3>
                                 <div class="row">
                                     <div ng-repeat="packing in item.packing">
                                         <div class="col-md-2" ng-class="{'active': order_item(item.id, packing.packing)}">
@@ -324,7 +366,7 @@ $page="index";
             </div>
             <div class="nav-bar bg-info color5-bg" ng-if="new_order.items" ng-show="new_order.items.length>0" style="border-top: solid 10px rgb(119,169,47);padding-top: 18px;">
                 <div class="col-md-1 order">
-                    <h2>{{ current_tab==1?'Sale':'Purchase'}} Order</h2>
+                    <h2>{{ new_order.transaction_type==1?'Cash':'Credit'}} {{ current_tab==1?'Sale':'Purchase'}} Order</h2>
                 </div>
                 <div class="col-md-5 items-margin">
                     <strong>Items Name</strong>
@@ -383,7 +425,7 @@ $page="index";
                             <li class="order-input-box">{{ order_total()|currency:'Rs. ':0 }}</li>
                         </ul>
                     </div>
-                    <div class="total-col">
+                    <div class="total-col" style="display:none">
                         <strong>Payment <i class="fa fa-refresh" ng-click="new_order.payment_amount=order_total()"></i></strong>
                         <ul>
                             <li><input type="text" name="payment_amount" class="order-input-box" ng-num-pad ng-model="new_order.payment_amount"/></li>
@@ -404,7 +446,7 @@ $page="index";
                             </li>
                         </ul>
                     </div>
-                    <div class="total-col">
+                    <div class="total-col" style="display:none">
                         <strong>Payment Account</strong>
                         <ul>
                             <li style="text-align:left">

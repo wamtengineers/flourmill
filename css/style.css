@@ -5163,6 +5163,9 @@ html, body, #wrapper{
 .wct_tab_danger{
 	background-color: #d9534f;
 }
+.wct_tab_orange{
+	background-color:#F07E51
+}
 .wct_tabs_selected {
     height: 20px;
     margin: -20px -30px 20px;
@@ -5272,3 +5275,4 @@ table.order-item-table input, table.order-item-table select {
 .wct_tabs span{
 	display:block;
 }
+.padding-bottom{ padding-bottom:400px !important;}

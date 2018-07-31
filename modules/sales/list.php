@@ -44,7 +44,8 @@ if(!defined("APP_START")) die("No Direct Access");
                 	<select name="status" id="status" class="custom_select">
                     	<option value="1"<?php echo ($status=="1")? " selected":"";?>>Dispatched</option>
                     	<option value="2"<?php echo ($status=="2")? " selected":"";?>>Delivering</option>
-                        
+                        <option value="3"<?php echo ($status=="3")? " selected":"";?>>Delivered</option>
+                        <option value="4"<?php echo ($status=="4")? " selected":"";?>>On Hold</option>
                         <option value="0"<?php echo ($status=="0")? " selected":"";?>>Cancelled</option>
                     </select>
                 </div>
@@ -141,6 +142,11 @@ if(!defined("APP_START")) die("No Direct Access");
 							elseif($r["status"]==2){
 								?>
 								<span class="order-status deliver">Delivering</span>
+								<?php
+							}
+							elseif($r["status"]==3){
+								?>
+								<span class="order-status onhold">On Hold</span>
 								<?php
 							}
 							?>

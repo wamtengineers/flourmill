@@ -88,6 +88,8 @@ else {
                 <select class="margin-btm-5" ng-model="addedit.status" chosen>
                     <option value="2"><?php echo $manage_url == 'purchase_manage.php' || $manage_url == 'sales_return_manage.php'?'Received':'Delivering'?></option>
                    	<option value="1"><?php echo $manage_url == 'purchase_manage.php' || $manage_url == 'sales_return_manage.php'?'Arrived':'Dispatched'?></option>
+                    <option value="3">Delivered</option>
+                    <option value="4">On Hold</option>
                     <option value="0">Cancelled</option>
                 </select>
             </div>
