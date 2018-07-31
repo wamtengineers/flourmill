@@ -5254,3 +5254,21 @@ table.order-item-table input, table.order-item-table select {
 .barcode_num span{ display:block;}
 #order_detail .qty{ border:1px solid #000; border-radius:50%; padding:0 10px; line-height:45px; display:inline-block;}
 .item-name{ font-size:30px;}
+.wct_tabs{
+	float: right;
+	margin-bottom: 20px;
+}
+.wct_tabs > div{
+	height: 100%;
+	width: 100px;
+	cursor: pointer;
+	text-transform: uppercase;
+	font-weight: bold;
+	float: left;
+	color: #fff;
+	background-color: #337ab7;
+	text-align:center;
+}
+.wct_tabs span{
+	display:block;
+}

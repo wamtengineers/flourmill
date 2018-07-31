@@ -25,6 +25,10 @@ $page="index";
                 <div class="wct_tab_cashbook" ng-click="show_tab( 3 )"><span><i class="fa fa-money"></i>Cashbook</span></div>
             </div>
         </div>
+        <div class="wct_tabs">
+            <div class="wct_tab_debit"><span><i class="fa fa-shopping-cart"></i>Debit</span></div>
+            <div class="wct_tab_credit"><span><i class="fa fa-shopping-cart"></i>Credit</span></div>
+        </div>
         <div id="item-row">
             <div class="wct_tabs_selected" ng-class="[{'wct_tab_overview': current_tab==0}, {'wct_tab_sales': current_tab==1}, {'wct_tab_purchase': current_tab==2}, {'wct_tab_cashbook': current_tab==3}]"></div>
             <div ng-if="errors.length > 0" class="errors">
