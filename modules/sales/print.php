@@ -23,7 +23,7 @@ if(isset($_GET["id"]) && !empty($_GET["id"])){
 	clear: both;
 }
 #main {
-width:7.6in;
+width:8.6in;
 border:0;
 }
 a {
@@ -58,7 +58,7 @@ table {
 	border-spacing: 0;
 	margin-bottom: 0px;
 }
-table tr:nth-child(2n-1) td {
+.items td {
 	background: #F5F5F5;
 	font-size: 1.6em;
 }
@@ -160,7 +160,7 @@ footer {
     width: 78px;
     display: inline-block;
 }
-.left-col{ float:left; width:50%}
+.left-col{ float:left; width:54%}
 .right-col{ float:right; width:40%;}
 </style>
 		<script>
@@ -215,7 +215,7 @@ footer {
         <div class="contentbox">
             <p>Date/Time: <strong style="float:right"><?php echo datetime_convert($sale["datetime_added"]); ?></strong></p>
             <p>Customer: <strong style="float:right"><?php echo get_field($sale["account_id"], "account","title"); ?></strong></p>
-            <table cellpadding="0" cellspacing="0" align="center" width="800" border="0" class="items">
+            <table cellpadding="0" cellspacing="0" align="center" width="800" border="0" class="">
                 <tr>
                     <th width="7%">S#</th>
                     <th width="35%">Item</th>
@@ -228,13 +228,17 @@ footer {
 				$items=doquery("select a.*, b.title from sales_items a left join items b on a.item_id=b.id where sales_id='".$sale["id"]."' order by b.sortorder desc", $dblink);
                 if(numrows($items)>0){
                     $sn=1;
+					$total_packing = 0;
+					$total_quantity = 0;
                     while($item=dofetch($items)){
+						$total_packing += $item["packing"];
+						$total_quantity += $item["quantity"];
                         ?>
                         <tr>
                             <td style="text-align:center"><?php echo $sn++?></td>
                             <td style="text-align:center;"><?php echo unslash($item["title"])?></td>
-                            <td style="text-align:center;"><?php echo unslash($item["packing"])?></td>
-                            <td style="text-align:center;"><?php echo $item["quantity"]?></td>
+                            <td style="text-align:right;"><?php echo curr_format($item["packing"])?></td>
+                            <td style="text-align:right;"><?php echo curr_format($item["quantity"])?></td>
                             <td style="text-align:right;"><?php echo curr_format($item["unit_price"])?></td>
                             <td style="text-align:right;"><?php echo curr_format($item["total_price"])?></td>
                         </tr>
@@ -242,8 +246,17 @@ footer {
                     }
                 }
                 ?>
+                <tr>
+                	<td colspan="6"><hr style="border:0; border-top:1px solid #999; margin:0;"></td>
+                </tr>
+                <tr>
+                	<td colspan="2"><strong>Total</strong></td>
+                    <td style="text-align:right;"><strong><?php echo curr_format($total_packing);?></strong></td>
+                    <td style="text-align:right;"><strong><?php echo curr_format($total_quantity);?></strong></td>
+                    <td colspan="2"><strong></strong></td>
+                </tr>
             </table>
-            <hr style="border:0; border-top:1px solid #999">
+            <hr style="border:0; border-top:1px solid #999; margin:0;">
             <p><strong>TOTAL</strong><strong style="float:right"> <?php 
                 $total_price= dofetch(doquery("select sum(total_price) as total_price from sales_items where sales_id='".$sale["id"]."'", $dblink));
                 echo curr_format($total_price["total_price"]);
@@ -254,9 +267,7 @@ footer {
     </div>
     </div>
    	<div class="right-col">
-    	<div id="logo">
-    		<?php $reciept_logo=get_config("reciept_logo"); if(empty($reciept_logo)) echo $site_title; else { ?><img src="<?php echo $file_upload_root;?>config/<?php echo $reciept_logo?>" /><?php }?>
-    	</div>
+    	
     <div id="order">Token Number: <strong><?php echo $order_id; ?></strong></div>
     <div class="barcode_num">
         <span class="barcode"><img src="barcode.php?text=<?php echo $barcode?>&size=30" /></span>
@@ -278,7 +289,6 @@ footer {
                         </td>
                     </tr>
                     <?php
-					$total_discount += $sale["discount"];
                 }
             }
             ?>
