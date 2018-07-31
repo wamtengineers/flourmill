@@ -191,16 +191,16 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 				$scope.wctAJAX( data, function( response ){
 					$scope.processing = false;
 					if( response.status == 1 ) {
+						$scope.print_receipt( response.order.id )
+						$scope.new_order = angular.copy( $scope.new_order_placeholder );
 						if( $scope.current_tab == 1 ){
 							$scope.sales_orders.unshift( response.order );
-							$scope.update_credit_account( 'sales' );
+							//$scope.update_credit_account( 'sales' );
 						}
 						else{
 							$scope.purchase_orders.unshift( response.order );
-							$scope.update_credit_account( 'purchase' );
+							//$scope.update_credit_account( 'purchase' );
 						}
-						$scope.print_receipt( response.order.id )
-						$scope.new_order = angular.copy( $scope.new_order_placeholder );
 					}
 					else{
 						alert(response.message);
@@ -446,6 +446,6 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 	};
 }).directive('ngNumPad', function() {
   	return function(scope, element, attrs) {
-    	angular.element(element).numpad();
+    	angular.element(element).numpad({decimalSeparator: '.'});
   	};
 });
