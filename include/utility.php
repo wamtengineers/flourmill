@@ -188,7 +188,7 @@ function createThumb($image_path,$image_type,$thumb_size,$thumb_path, $height=""
 }
 
 /*--------------ImageCreateFromBMP Function--------------*/
-function ImageCreateFromBMP($filename){
+/*function ImageCreateFromBMP($filename){
    if (! $f1 = fopen($filename,"rb")) return FALSE;
 
    $FILE = unpack("vfile_type/Vfile_size/Vreserved/Vbitmap_offset", fread($f1,14));
@@ -267,7 +267,7 @@ function ImageCreateFromBMP($filename){
    fclose($f1);
 
  return $res;
-}
+}*/
 
 function get_image($img, $size, $folder){
 	global $site_url;
