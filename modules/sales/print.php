@@ -160,7 +160,7 @@ footer {
     width: 78px;
     display: inline-block;
 }
-.left-col{ float:left; width:54%}
+.left-col{ float:left; width:54%;margin-left: 20px;}
 .right-col{ float:right; width:40%;}
 </style>
 		<script>
@@ -219,10 +219,10 @@ footer {
                 <tr>
                     <th width="7%">S#</th>
                     <th width="35%">Item</th>
-                    <th width="15%">Packing</th>
-                    <th width="15%">Qty</th>
-                    <th width="15%">Rate</th>
-                    <th width="15%">Amount</th>
+                    <th width="15%" style="text-align:right;">Packing</th>
+                    <th width="15%" style="text-align:right;">Qty</th>
+                    <th width="15%" style="text-align:right;">Rate</th>
+                    <th width="15%" style="text-align:right;">Amount</th>
                 </tr>
                 <?php
 				$items=doquery("select a.*, b.title from sales_items a left join items b on a.item_id=b.id where sales_id='".$sale["id"]."' order by b.sortorder desc", $dblink);
@@ -247,7 +247,7 @@ footer {
                 }
                 ?>
                 <tr>
-                	<td colspan="6"><hr style="border:0; border-top:1px solid #999; margin:0;"></td>
+                	<td colspan="6" style="padding:0;"><hr style="border:0; border-top:1px solid #999; margin:0;"></td>
                 </tr>
                 <tr>
                 	<td colspan="2"><strong>Total</strong></td>
@@ -256,7 +256,7 @@ footer {
                     <td colspan="2"><strong></strong></td>
                 </tr>
             </table>
-            <hr style="border:0; border-top:1px solid #999; margin:0;">
+            <hr style="border:0; border-top:1px solid #999; margin:0 0 5px;">
             <p><strong>TOTAL</strong><strong style="float:right"> <?php 
                 $total_price= dofetch(doquery("select sum(total_price) as total_price from sales_items where sales_id='".$sale["id"]."'", $dblink));
                 echo curr_format($total_price["total_price"]);
