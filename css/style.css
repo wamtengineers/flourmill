@@ -5276,3 +5276,23 @@ table.order-item-table input, table.order-item-table select {
 	display:block;
 }
 .padding-bottom{ padding-bottom:400px !important;}
+.credit-account-selector .chosen-container {
+    height: 50px;
+}
+
+.credit-account-selector a.chosen-single {
+    height:  50px !important;
+}
+
+.credit-account-selector a.chosen-single span {
+    line-height: 48px;
+}
+
+.credit-account-selector .chosen-search input {
+    height: 50px !important;
+}
+
+.credit-account-selector .chosen-container .chosen-results li {
+    height:  50px;
+    line-height: 50px;
+}

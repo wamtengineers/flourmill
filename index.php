@@ -107,7 +107,7 @@ $page="index";
                                	</div>
                             </div>                        
                        	</div>
-                        <div id="tabs" class="c-tabs no-js items-wrap clearfix" ng-show="new_order.transaction_type==2 && new_order.account_id=='0'">
+                        <div id="tabs" class="c-tabs no-js items-wrap clearfix credit-account-selector" ng-show="new_order.transaction_type==2 && new_order.account_id=='0'">
                         	<h1 style="margin:0">Select Account</h1>
                             <select ng-model="new_order.account_id" class="order-select-box" chosen>
                                 <option value="0">Select Account</option>
@@ -117,7 +117,7 @@ $page="index";
                             </select>
                        	</div>
                     	<div id="tabs" class="c-tabs no-js items-wrap clearfix" ng-show="new_order.transaction_type!='' && new_order.account_id!='0'">
-                        	<h1 style="margin:0">{{ new_order.transaction_type==1?"Cash":"Credit" }} {{ current_tab==1?"Sale":"Purchase" }}</h1>
+                        	<h1 style="margin:0">{{ new_order.transaction_type==1?"Cash":"Credit" }} {{ current_tab==1?"Sale":"Purchase" }} <span ng-if="new_order.transaction_type==2"> - {{ get_field( new_order.account_id, accounts, 'title' ) }}</span></h1>
                             <button class="btn btn-primary" ng-click="new_order.transaction_type=''" style="margin-bottom:20px;">
                             	Back
                             </button>
