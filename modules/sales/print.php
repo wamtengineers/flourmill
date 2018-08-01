@@ -99,7 +99,7 @@ table td.grand {
 #signcompny {
     border-top: thin solid #999;
     margin: 5px 0 0;
-	padding-top: 5px;
+	padding:5px 10px 0 10px;
     text-align: center;
 }
 footer {
@@ -161,6 +161,7 @@ footer {
 }
 .left-col{ float:left; width:54%;margin-left: 20px;}
 .right-col{ float:right; width:40%;}
+.credit{ display:inline-block; background:#000; border-radius:4px; padding:3px; color:#fff}
 </style>
 		<script>
 		function print_page(){
@@ -212,8 +213,8 @@ footer {
     	<!--<span class="address"><?php echo nl2br(get_config("address_phone"))?></span>-->
     	<div id="order">Order ID: <strong><?php echo $order_id; ?></strong></div>
         <div class="contentbox">
-            <p style="float:left; margin-top:10px">Date/Time:<br> <strong><?php echo datetime_convert($sale["datetime_added"]); ?></strong></p>
-            <p style="float:right; text-align:right; font-size:1.3em">Customer:<br> <strong><?php echo get_field($sale["account_id"], "account","title"); ?></strong> <?php if(empty($sale["transaction_id"])){ echo "(CREDIT)";}?></p>
+            <p style="float:left; margin-top:16px">Date/Time:<br> <strong><?php echo datetime_convert($sale["datetime_added"]); ?></strong></p>
+            <p style="float:right; text-align:right; font-size:1.3em">Customer:<br> <strong><?php echo get_field($sale["account_id"], "account","title"); ?></strong> <span class="credit"><?php if(empty($sale["transaction_id"])){ echo "(CREDIT)";}?></span></p>
             <!--<p style="float:right; font-size:1.3em"><span><?php if(empty($sale["transaction_id"])){ echo "(CREDIT)";}?></span></p>-->
             <table cellpadding="0" cellspacing="0" align="center" width="800" border="0" class="">
                 <tr>
