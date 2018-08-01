@@ -37,7 +37,7 @@ span.number {
     padding-left: 0px;
     font-weight: bold;
 }
-.barcode_num{ text-align:center; margin-bottom:10px}
+.barcode_num{ text-align:center; margin-bottom:5px}
 span.item_name {
 font-weight: bold;
 font-size: 1.4em;
