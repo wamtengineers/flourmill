@@ -161,7 +161,18 @@ footer {
 }
 .left-col{ float:left; width:54%;margin-left: 20px;}
 .right-col{ float:right; width:40%;}
-.credit{ display:inline-block; background:#000; border-radius:4px; padding:3px; color:#fff}
+.credit {
+
+    display: inline-block;
+    background: #000;
+    border-radius: 8px;
+    padding: 0 10px;
+    color: #fff;
+    font-size: 9px;
+    line-height: 17px;
+	float:right;
+	margin-bottom:10px
+}
 </style>
 		<script>
 		function print_page(){
@@ -207,19 +218,19 @@ footer {
 	$total_discount = 0;
 	?>
 	<div class="left-col">
-    	<!--<div id="logo">
-    		<?php $reciept_logo=get_config("reciept_logo"); if(empty($reciept_logo)) echo $site_title; else { ?><img src="<?php echo $file_upload_root;?>config/<?php echo $reciept_logo?>" /><?php }?>
-    	</div>-->
-    	<!--<span class="address"><?php echo nl2br(get_config("address_phone"))?></span>-->
-    	<div id="order">Order ID: <strong><?php echo $order_id; ?></strong></div>
+    	<div id="order">Order <strong>#<?php echo $sale["id"]; ?></strong></div>
+        <div style="text-align:center"><?php echo datetime_convert($sale["datetime_added"]); ?></div>
+        <div class="barcode_num">
+            <span class="barcode"><img src="barcode.php?text=<?php echo $barcode?>&size=30" /></span>
+            <span class="number"><?php echo $barcode?></span>
+        </div>
         <div class="contentbox">
-            <p style="float:left; margin-top:16px">Date/Time:<br> <strong><?php echo datetime_convert($sale["datetime_added"]); ?></strong></p>
-            <p style="float:right; text-align:right; font-size:1.3em">Customer:<br> <strong><?php echo get_field($sale["account_id"], "account","title"); ?></strong> <span class="credit"><?php if(empty($sale["transaction_id"])){ echo "(CREDIT)";}?></span></p>
+            <p><?php if(empty($sale["transaction_id"])){ echo '<span class="credit">CREDIT</span>';}?><strong><?php echo get_field($sale["account_id"], "account","title"); ?></strong></p>
             <!--<p style="float:right; font-size:1.3em"><span><?php if(empty($sale["transaction_id"])){ echo "(CREDIT)";}?></span></p>-->
             <table cellpadding="0" cellspacing="0" align="center" width="800" border="0" class="">
                 <tr>
                     <th width="7%">S#</th>
-                    <th width="35%">Item</th>
+                    <th width="35%" style="text-align:left">Item</th>
                     <th width="15%" style="text-align:right;">Packing</th>
                     <th width="15%" style="text-align:right;">Qty</th>
                     <th width="15%" style="text-align:right;">Rate</th>
@@ -237,7 +248,7 @@ footer {
                         ?>
                         <tr>
                             <td style="text-align:center"><?php echo $sn++?></td>
-                            <td style="text-align:center;"><?php echo unslash($item["title"])?></td>
+                            <td style="text-align:left;"><?php echo unslash($item["title"])?></td>
                             <td style="text-align:right;"><?php echo curr_format($item["packing"])?></td>
                             <td style="text-align:right;"><?php echo curr_format($item["quantity"])?></td>
                             <td style="text-align:right;"><?php echo curr_format($item["unit_price"])?></td>
@@ -263,47 +274,76 @@ footer {
                 echo curr_format($total_price["total_price"]);
             
             ?></strong></p>
+            <?php if( $sale["discount"] > 0 ) {?>
             <p><strong>Discount</strong><strong style="float:right"> <?php echo curr_format($sale["discount"])?></strong></p>
             <p><strong>TOTAL</strong><strong style="float:right"> <?php echo curr_format($total_price["total_price"] -$sale["discount"])?></strong></p>
+            <?php }?>
+            <p><?php echo ucfirst(convert_number_to_words( $total_price["total_price"] -$sale["discount"] ))?> rupees only</p>
     </div>
     </div>
    	<div class="right-col">
-    	
-    <div id="order">Token Number: <strong><?php echo $order_id; ?></strong></div>
-    <div class="barcode_num">
-        <span class="barcode"><img src="barcode.php?text=<?php echo $barcode?>&size=30" /></span>
-        <span class="number"><?php echo $barcode?></span>
-    </div>
-    <div class="contentbox">
-        <p>Date/Time: <strong style="float:right"><?php echo datetime_convert($sale["datetime_added"]); ?></strong></p>
-        <table cellpadding="0" cellspacing="0" align="center" width="800" border="0" class="items">
-            <?php
-           
-		   $items1=doquery("select a.*, b.title from sales_items a left join items b on a.item_id=b.id where sales_id='".$sale["id"]."' order by b.sortorder desc", $dblink);
-            if(numrows($items1)>0){
-                $sn=1;
-                while($item1=dofetch($items1)){
-                    ?>
-                    <tr>
-                    	<td style="text-align:left;"><span class="item_name"><?php echo unslash($item1["title"])?></span> &times; <span class="qty"><?php echo $item1["quantity"]?></span> <?php echo $item1["packing"]?>KG
-                        	
-                        </td>
-                    </tr>
-                    <?php
+    	<div id="order">Order <strong>#<?php echo $sale["id"]; ?></strong></div>
+        <div style="text-align:center"><?php echo datetime_convert($sale["datetime_added"]); ?></div>
+        <div class="barcode_num">
+            <span class="barcode"><img src="barcode.php?text=<?php echo $barcode?>&size=30" /></span>
+            <span class="number"><?php echo $barcode?></span>
+        </div>
+        <div class="contentbox">
+            <p><?php if(empty($sale["transaction_id"])){ echo '<span class="credit">CREDIT</span>';}?><strong><?php echo get_field($sale["account_id"], "account","title"); ?></strong></p>
+            <!--<p style="float:right; font-size:1.3em"><span><?php if(empty($sale["transaction_id"])){ echo "(CREDIT)";}?></span></p>-->
+            <table cellpadding="0" cellspacing="0" align="center" width="800" border="0" class="">
+                <tr>
+                    <th width="7%">S#</th>
+                    <th width="35%" style="text-align:left">Item</th>
+                    <th width="15%" style="text-align:right;">Packing</th>
+                    <th width="15%" style="text-align:right;">Qty</th>
+                    <th width="15%" style="text-align:right;">Rate</th>
+                    <th width="15%" style="text-align:right;">Amount</th>
+                </tr>
+                <?php
+				$items=doquery("select a.*, b.title from sales_items a left join items b on a.item_id=b.id where sales_id='".$sale["id"]."' order by b.sortorder desc", $dblink);
+                if(numrows($items)>0){
+                    $sn=1;
+					$total_packing = 0;
+					$total_quantity = 0;
+                    while($item=dofetch($items)){
+						$total_packing += $item["packing"];
+						$total_quantity += $item["quantity"];
+                        ?>
+                        <tr>
+                            <td style="text-align:center"><?php echo $sn++?></td>
+                            <td style="text-align:left;"><?php echo unslash($item["title"])?></td>
+                            <td style="text-align:right;"><?php echo curr_format($item["packing"])?></td>
+                            <td style="text-align:right;"><?php echo curr_format($item["quantity"])?></td>
+                            <td style="text-align:right;"><?php echo curr_format($item["unit_price"])?></td>
+                            <td style="text-align:right;"><?php echo curr_format($item["total_price"])?></td>
+                        </tr>
+                        <?php
+                    }
                 }
-            }
-            ?>
-        </table>
-        <hr style="border:0; border-top:1px solid #999; margin:0 0 5px;">
-        <p><strong>TOTAL</strong><strong style="float:right"> <?php 
-            $total_price= dofetch(doquery("select sum(total_price) as total_price from sales_items where sales_id='".$sale["id"]."'", $dblink));
-            echo curr_format($total_price["total_price"]);
-        
-        ?></strong></p>
-        <p><strong>Discount</strong><strong style="float:right"> <?php echo curr_format($sale["discount"])?></strong></p>
-        <p><strong>TOTAL</strong><strong style="float:right"> <?php echo curr_format($total_price["total_price"] -$sale["discount"])?></strong></p>
+                ?>
+                <tr>
+                	<td colspan="6" style="padding:0;"><hr style="border:0; border-top:1px solid #999; margin:0;"></td>
+                </tr>
+                <tr>
+                	<td colspan="2"><strong>Total</strong></td>
+                    <td style="text-align:right;"><strong><?php echo curr_format($total_packing);?></strong></td>
+                    <td style="text-align:right;"><strong><?php echo curr_format($total_quantity);?></strong></td>
+                    <td colspan="2"><strong></strong></td>
+                </tr>
+            </table>
+            <hr style="border:0; border-top:1px solid #999; margin:0 0 5px;">
+            <p><strong>TOTAL</strong><strong style="float:right"> <?php 
+                $total_price= dofetch(doquery("select sum(total_price) as total_price from sales_items where sales_id='".$sale["id"]."'", $dblink));
+                echo curr_format($total_price["total_price"]);
+            
+            ?></strong></p>
+            <?php if( $sale["discount"] > 0 ) {?>
+            <p><strong>Discount</strong><strong style="float:right"> <?php echo curr_format($sale["discount"])?></strong></p>
+            <p><strong>TOTAL</strong><strong style="float:right"> <?php echo curr_format($total_price["total_price"] -$sale["discount"])?></strong></p>
+            <?php }?>
+            <p><?php echo ucfirst(convert_number_to_words( $total_price["total_price"] -$sale["discount"] ))?> rupees only</p>
     </div>
-    <div id="signcompny">Software developed by wamtSol http://wamtsol.com/ - 0346 3891 662</div>
     </div> 
 </div>
 </body>
