@@ -5215,6 +5215,8 @@ span.order-status {
 .order-status.cancel{ background:red;}
 .order-status.dispatch{ background:#337ab7;}
 .order-status.deliver{ background:#f0ad4e;}
+.order-status.delivered{ background:#5bc0de;}
+.order-status.onhold{ background:#F07E51;}
 .topstats .chosen-results li {
     text-align: left;
 }
