@@ -53,17 +53,19 @@ if(!empty($account_id)){
 	$is_search=true;
 }
 if(isset($_GET["status"])){
-	$status=slash($_GET["status"]);
-	$_SESSION["sales"]["list"]["status"]=$status;
+	$_SESSION["sales"]["list"]["status"]=$_GET[ "status" ];
 }
 if(isset($_SESSION["sales"]["list"]["status"])){
 	$status=$_SESSION["sales"]["list"]["status"];
 }
 else{
-	$status=1;
+	$status=array();
 }	
-if(($status!= "")){
-	$extra.=" and status='".$status."'";
+if(count( $status ) > 0){
+	$sts = array();
+	foreach( $status as $st )
+		$sts[] = "status='".$st."'";
+	$extra .= "and (".implode( " or ", $sts ).")";
 	$is_search=true;
 }
 if(isset($_GET["q"])){

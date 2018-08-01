@@ -64,9 +64,9 @@ if( count( $_POST ) > 0 ) {
 					if( !isset( $order->account_id ) || empty( $order->account_id ) ) {
 						$err[] = "Select Account";
 					}
-					if( ( !isset( $order->payment_account_id ) || empty( $order->payment_account_id ) ) && $order->payment_amount > 0 ) {
+					/*if( ( !isset( $order->payment_account_id ) || empty( $order->payment_account_id ) ) && $order->payment_amount > 0 ) {
 						$err[] = "Select Payment Account";
-					}
+					}*/
 					if( ( !isset( $order->broker_account_id ) || empty( $order->broker_account_id ) ) && $order->broker_amount > 0 ) {
 						$err[] = "Select Broker Account";
 					}
@@ -85,14 +85,22 @@ if( count( $_POST ) > 0 ) {
 								$account_id = $order->account_id;
 								$reference_id = $order->payment_account_id;
 							}
-							doquery( "insert into ".$module."( account_id, datetime_added, less_weight, discount, cnf, added_by ) values('".$order->account_id."', NOW(), '".$order->less_weight."', '".$order->discount."', '".$order->cnf."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."')", $dblink );
+							doquery( "insert into ".$module."( account_id, datetime_added, less_weight, discount, cnf, status, added_by ) values('".$order->account_id."', NOW(), '".$order->less_weight."', '".$order->discount."', '".$order->cnf."', 2, '".$_SESSION[ "logged_in_admin" ][ "id" ]."')", $dblink );
 							$order_id = inserted_id();
+							$grand_total = 0;
 							foreach( $order->items as $item ) {
-								$total_price = ($item->quantity-(int)$item->less_weight) * $item->unit_price;
+								$total_price = ($item->quantity-(float)$item->less_weight) * $item->unit_price;
 								doquery("insert into ".$module."_items(".$module."_id, item_id, packing, unit_price, rate, quantity, less_weight, total_price) values('".$order_id."', '".$item->item_id."', '".$item->packing."', '".$item->unit_price."', '".$item->rate."', '".$item->quantity."', '".$item->less_weight."', '".$total_price."')", $dblink);
+								$grand_total += $total_price;
 							}
-							if( !empty( $order->payment_amount ) ) {
+							$grand_total -= (float)$order->discount;
+							/*if( !empty( $order->payment_amount ) ) {
 								doquery( "insert into transaction( account_id, reference_id, datetime_added, amount, details, added_by ) values( '".$account_id."', '".$reference_id."', NOW(), '".$order->payment_amount."', 'Payment against ".$module." order #".$order_id."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."' )", $dblink );
+								$transaction_id = inserted_id();
+								doquery( "update ".$module." set transaction_id = '".$transaction_id."' where id = '".$order_id."'", $dblink );
+							}*/
+							if( $order->transaction_type == 1 ) {
+								doquery( "insert into transaction( account_id, reference_id, datetime_added, amount, details, added_by ) values( '".$account_id."', '".$reference_id."', NOW(), '".$grand_total."', 'Payment against ".$module." order #".$order_id."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."' )", $dblink );
 								$transaction_id = inserted_id();
 								doquery( "update ".$module." set transaction_id = '".$transaction_id."' where id = '".$order_id."'", $dblink );
 							}

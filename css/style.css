@@ -5163,6 +5163,9 @@ html, body, #wrapper{
 .wct_tab_danger{
 	background-color: #d9534f;
 }
+.wct_tab_orange{
+	background-color:#F07E51
+}
 .wct_tabs_selected {
     height: 20px;
     margin: -20px -30px 20px;
@@ -5212,6 +5215,8 @@ span.order-status {
 .order-status.cancel{ background:red;}
 .order-status.dispatch{ background:#337ab7;}
 .order-status.deliver{ background:#f0ad4e;}
+.order-status.delivered{ background:#5bc0de;}
+.order-status.onhold{ background:#F07E51;}
 .topstats .chosen-results li {
     text-align: left;
 }
@@ -5271,4 +5276,25 @@ table.order-item-table input, table.order-item-table select {
 }
 .wct_tabs span{
 	display:block;
+}
+.padding-bottom{ padding-bottom:400px !important;}
+.credit-account-selector .chosen-container {
+    height: 50px;
+}
+
+.credit-account-selector a.chosen-single {
+    height:  50px !important;
+}
+
+.credit-account-selector a.chosen-single span {
+    line-height: 48px;
+}
+
+.credit-account-selector .chosen-search input {
+    height: 50px !important;
+}
+
+.credit-account-selector .chosen-container .chosen-results li {
+    height:  50px;
+    line-height: 50px;
 }

@@ -42,6 +42,8 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 		
 		$scope.new_order_placeholder = {
 			"id": "",
+			"transaction_type": "",
+			"transaction_item": "",
 			"discount": "",
 			"account_id": "0",
 			"less_weight": "",
@@ -291,6 +293,12 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			}
 			else if( $scope.overview_tab[module] == 2 ) {
 				return $filter('filter')($scope[module+'_orders'], {status: 2});
+			}
+			else if( $scope.overview_tab[module] == 4 ) {
+				return $filter('filter')($scope[module+'_orders'], {status: 3});
+			}
+			else if( $scope.overview_tab[module] == 5 ) {
+				return $filter('filter')($scope[module+'_orders'], {status: 4});
 			}
 			else {
 				return $filter('filter')($scope[module+'_orders'], {status: 0});
