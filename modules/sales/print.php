@@ -173,6 +173,19 @@ footer {
 	float:right;
 	margin-bottom:10px
 }
+.qrcode {
+    position: absolute;
+    width: 60px;
+}
+
+.qrcode img {
+    width: 100%;
+}
+
+.contentbox {
+    clear: both;
+    margin-top: 24px;
+}
 </style>
 		<script>
 		function print_page(){
@@ -218,10 +231,11 @@ footer {
 	$total_discount = 0;
 	?>
 	<div class="left-col">
+    	<div class="qrcode"><img src="phpqrcode/receipt.php?id=<?php echo $sale["id"]?>"/></div>
     	<div id="order">Order <strong>#<?php echo $sale["id"]; ?></strong></div>
         <div style="text-align:center"><?php echo datetime_convert($sale["datetime_added"]); ?></div>
-        <div class="barcode_num">
-            <span class="barcode"><img src="barcode.php?text=<?php echo $barcode?>&size=30" /></span>
+        <div class="barcode_num" style="display:none">
+            <span class="barcode"><!--<img src="barcode.php?text=<?php echo $barcode?>&size=30" />--></span>
             <span class="number"><?php echo $barcode?></span>
         </div>
         <div class="contentbox">
@@ -282,9 +296,10 @@ footer {
     </div>
     </div>
    	<div class="right-col">
+    	<div class="qrcode"><img src="phpqrcode/receipt.php?id=<?php echo $sale["id"]?>"/></div>
     	<div id="order">Order <strong>#<?php echo $sale["id"]; ?></strong></div>
         <div style="text-align:center"><?php echo datetime_convert($sale["datetime_added"]); ?></div>
-        <div class="barcode_num">
+        <div class="barcode_num" style="display: none;">
             <span class="barcode"><img src="barcode.php?text=<?php echo $barcode?>&size=30" /></span>
             <span class="number"><?php echo $barcode?></span>
         </div>
