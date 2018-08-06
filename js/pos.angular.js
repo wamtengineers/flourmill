@@ -3,9 +3,10 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 		$scope.items = [];
 
 		$scope.sales_orders = [];
+		$scope.sales_revalidate = [];
 		$scope.purchase_orders = [];
 		$scope.transactions = [];
-		$scope.expenses = []
+		$scope.expenses = [];
 		$scope.expense_categories = [];
 		$scope.credit_accounts = {
 			"sales": [],
@@ -73,9 +74,17 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			"amount": "",
 			"details": "",
 		};
+		$scope.sales_revalidate_placeholder = {
+			"id": "",
+			"sales_id": "",
+			"items": [],
+			"revalidated_by": "",
+			"ts": ""
+		};
 		$scope.new_order = {};
 		$scope.transaction = angular.copy( $scope.transaction_placeholder );
 		$scope.expense = angular.copy( $scope.expense_placeholder );
+		$scope.sale_revalidate = angular.copy( $scope.sales_revalidate_placeholder );
 		$scope.updateDate = function(){
 			$scope.dt = $(".angular-datepicker").val();
 			$scope.$apply();
@@ -269,6 +278,10 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 				$scope.sales_orders = response;
 				$scope.update_credit_account( 'sales' );
 			});
+			$scope.wctAJAX( {action: 'get_sales_revalidate', dt: $scope.dt}, function( response ){
+				$scope.sales_revalidate = response;
+				//$scope.update_credit_account( 'sales' );
+			});
 			$scope.wctAJAX( {action: 'get_orders', dt: $scope.dt, module: 'purchase'}, function( response ){
 				$scope.purchase_orders = response;
 				$scope.update_credit_account( 'purchase' );
@@ -302,6 +315,29 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			}
 			else {
 				return $filter('filter')($scope[module+'_orders'], {status: 0});
+			}
+		}
+		$scope.save_revalidate_sale = function(){
+			if( $scope.processing == false ) {
+				if( $scope.sale_revalidate.sales_id == "" ){
+					alert("Enter Sale Id");
+				}
+				else{
+					$scope.processing = true;
+					$scope.wctAJAX( {action: 'save_revalidate_sale', sale_revalidate: JSON.stringify($scope.sale_revalidate)}, function( response ){
+						$scope.processing = false;
+						if( response.status == 1 ) {
+							if( !$scope.sale_revalidate.id ){
+								$scope.sale_revalidate.unshift(response.sale_revalidate);
+							}
+							$scope.sales_revalidate = angular.copy( $scope.sales_revalidate_placeholder );
+														
+						}
+						else{
+							alert(response.message);
+						}
+					});	
+				}
 			}
 		}
 		$scope.add_expense = function(){
@@ -371,12 +407,28 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			}
 			return total;
 		}
+		$scope.sum_revalidate = function( sale_revalidate ){
+			var total = 0;
+			for( var i =0; i < $scope.sales_revalidate.items.length; i++ ) {
+				
+					total += Number( $scope.sales_revalidate.items[ i ].total_price );
+			}
+			return total;
+		}
 		$scope.sum_dynamic = function( array, position, property ){
 			var total = 0;
 			for( var i =0; i <= position; i++ ) {
 				if( typeof array[ i ][ property ] !== 'undefined' ) {
 					total += Number( array[ i ][ property ] );
 				}
+			}
+			return total;
+		}
+		$scope.total_kg_revalidate = function( sale_revalidate ){
+			total = 0;
+			for( i = 0; i < $scope.sales_revalidate.items.length; i++ ) {
+				//total += Number( $scope.sales_revalidate.items[ i ].quantity );
+				total +=  ($scope.sales_revalidate.items[i].rate==0?$scope.sales_revalidate.items[i].packing:1) * (Number($scope.sales_revalidate.items[i].quantity)-Number( $scope.sales_revalidate.items[i].less_weight ));
 			}
 			return total;
 		}
@@ -396,6 +448,7 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			}
 			return total;
 		}
+		
 		$scope.total_price = function( array ){
 			var total = 0;
 			for( var i =0; i < array.length; i++ ) {

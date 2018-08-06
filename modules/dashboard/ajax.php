@@ -162,6 +162,76 @@ if( count( $_POST ) > 0 ) {
 					doquery( "update ".($update_order[ "cnf" ]==1?"expense":"transaction")." set status='".$status."' where id = '".$update_order[ "fare_transaction_id" ]."'", $dblink );
 				}
 			break;
+			case "get_sales_revalidate":
+				$rs = doquery( "select a.id, a.sales_id, a.revalidated_by, a.ts from sales_revalidate a left join admin b on a.revalidated_by = b.id where ts>'".$from."' and ts<='".$to."' order by ts desc, id desc", $dblink );
+				$payment_account_id = "";
+				$payment_amount = 0;
+				if( !empty( $order[ "transaction_id" ] ) ) {
+					$transaction = doquery( "select * from transaction where id = '".$order[ "transaction_id" ]."'", $dblink );
+					if( numrows( $transaction ) > 0 ) {
+						$transaction = dofetch( $transaction );
+							$payment_account_id = $transaction[ "account_id" ];
+							$payment_amount = $transaction[ "amount" ];
+					}
+				}
+				$sale_revalidate = array();
+				if( numrows( $rs ) > 0 ) {
+					$r = dofetch( $rs ) ;
+					$sale_revalidate[] = array(
+						"id" => $r["id"],
+						"sales_id" => $r[ "sales_id" ],
+						"revalidated_by" => $r[ "revalidated_by" ],
+						"payment_account_id" => $payment_account_id,
+						"payment_amount" => $payment_amount,
+						"items" => array()
+					);
+					
+					$items = array();
+					$rs = doquery( "select a.*, b.title from sales_items a inner join items b on a.item_id = b.id where sales_id='".$r["sales_id"]."' order by b.sortorder desc", $dblink );
+					if( numrows( $rs ) > 0 ) {
+						while( $r = dofetch( $rs ) ) {
+							$items[] = array(
+								"title" => unslash( $r[ "title" ] ),
+								"id" => $r["id"],
+								"sales_id" => $r[ "sales_id" ],
+								"item_id" => $r["item_id"],
+								"packing" => $r["packing"],
+								"quantity" => $r[ "quantity" ],
+								"less_weight" => $r[ "less_weight" ],
+								"unit_price" => $r[ "unit_price" ],
+								"rate" => $r[ "rate" ],
+								"total" => $r[ "total_price" ],
+							);
+						}
+					}
+					$sale_revalidate[ "items" ] = $items;
+				}
+				$response = $sale_revalidate;
+			break;
+			case "save_revalidate_sale":
+				$sale_revalidate = json_decode( $sale_revalidate );
+				if( !empty( $sale_revalidate->sales_id ) ) {
+					doquery("insert into sales_revalidate(sales_id, revalidated_by) values('".slash($sale_revalidate->sales_id)."', '".$_SESSION["logged_in_admin"]["id"]."')", $dblink);
+					$id = inserted_id();
+					$r = dofetch(doquery("select * from sales_revalidate where id ='".$id."'", $dblink));
+					$sale_revalidate = array(
+						"id" => $r[ "id" ],
+						"sales_id" => $r["sales_id"],
+						"revalidated_by" => $r["revalidated_by"],
+						"items" => array()
+					);
+					$response = array(
+						"status" => 1,
+						"sale_revalidate" => $sale_revalidate
+					);
+				}
+				else{
+					$response = array(
+						"status" => 0,
+						"message" => "Enter Category, Account and Amount"
+					);
+				}				
+			break;
 			case "get_accounts":
 				$rs = doquery( "select a.*, b.title as account_type from account a left join account_type b on a.account_type_id = b.id where a.status=1 and b.status = 1 order by b.sortorder, a.title", $dblink );
 				$drawbox_id = get_config( 'drawbox_id' );

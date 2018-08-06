@@ -16,7 +16,11 @@ $page="index";
         <div class="page-header">
             <h1 class="title">{{ current_tab==0?'Overview':(current_tab==1?'Sales':(current_tab==2?'Purchase':'Cashbook')) }}</h1>
             <ol class="breadcrumb">
-                <li class="active"><input ng-model="dt" data-controllerid="posController" class="form-control datepicker angular-datepicker" /></li>
+                <li class="active">
+                	<label>Revalidate Number</label>
+                    <input ng-model="sale_revalidate.sales_id" type="text" style="vertical-align:top">
+                    <button type="submit" ng-click="save_revalidate_sale()" class="btn btn-default btn-l">Submit</button>
+                </li>
             </ol>
             <div class="wct_tabs_container">
                 <div class="wct_tab_overview" ng-click="show_tab( 0 )"><span><i class="fa fa-tachometer"></i>Overview</span></div>
@@ -77,6 +81,51 @@ $page="index";
                                         <td class="text-center">
                                         	<span class="order-status" ng-if="module=='sales'" ng-class="[{'wct_tab_danger': order.status==0}, {'wct_tab_sales': order.status==1}, {'wct_tab_purchase': order.status==2}, {'wct_tab_cashbook': order.status==3}, {'wct_tab_orange': order.status==4}]">{{ order.status==0?'Cancelled':(order.status==1?'Dispatched':(order.status==2?'Delivering':(order.status==3?'Delivered':(order.status==4?'On Hold':'Cancelled')))) }}</span>
                                         	<span class="order-status" ng-if="module=='purchase'" ng-class="[{'wct_tab_danger': order.status==0}, {'wct_tab_sales': order.status==1}, {'wct_tab_purchase': order.status==2}]">{{ order.status==0?'Cancelled':(order.status==1?'Received':(order.status==2?'Receiving':'Cancelled')) }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                        	<a href="" title="Hold Order" class="cancel-order" ng-click="set_status(order.id, 4, module)" ng-if="order.status==2 || order.status==3"><i class="fa fa-close" aria-hidden="true"></i></a>
+                                            <?php if( $_SESSION[ "logged_in_admin" ][ "admin_type_id" ] == 1 ){?><a href="" title="Print" ng-click="print_receipt(order.id)" ng-if="module=='sales' && order.status != 0"><i class="fa fa-print" aria-hidden="true"></i></a><?php } ?>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="get_orders( module ).length == 0" class="alert-danger">
+                                    	<td colspan="10">No records found.</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="total-sale">
+                            <h2 class="total-heading">Sales Revalidate</h2>
+                            <div id="cart" class="panel-body table-responsive" style="max-height: 435px;">
+                                <table width="100%" class="table table-hover list">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">Token No.</th>
+                                            <th width="5%">Time</th>
+                                            <th width="12%">Account</th>
+                                            <th width="25%">Items</th>
+                                            <th width="8%" class="text-right">Total KG</th>
+                                            <th width="8%" class="text-right">Total Price<br></th>
+                                            <th width="8%" class="text-right">Payment<br></th>
+                                            <th width="12%" class="text-right">Payment Account</th>
+                                            <th width="8%" class="text-center">Status</th>
+                                            <th width="10%" class="text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tr ng-repeat="sale_revalidate in sales_revalidate">
+                                        <td class="text-center">{{ sale_revalidate.token_number }}</td>
+                                        <td>{{ sale_revalidate.datetime_added }}</td>
+                                        <td>{{ get_field( sale_revalidate.account_id, accounts, "title" ) }}</td>
+                                        <td>
+                                            <ul>
+                                                <li ng-repeat="item in sales_revalidate.items">{{ item.title }} {{ item.packing }}KG x {{ item.quantity }} Packs (Rate: <span ng-click="rate_update( sale_revalidate.id )">{{ item.unit_price|currency:"Rs.":2 }}</span>)</li>
+                                            </ul>
+                                        </td>
+                                        <td class="text-right">{{ total_kg_revalidate( sale_revalidate )|currency:'':0 }} Kg</td>
+                                        <td class="text-right">{{ sum_revalidate( sale_revalidate ) - sale_revalidate.discount |currency:'':0 }}</td>
+                                        <td class="text-right">{{ sale_revalidate.payment_amount|currency:'':0 }}</td>
+                                        <td>{{ get_field( sale_revalidate.payment_account_id, accounts, "title" ) }}</td>
+                                        <td class="text-center">
+                                        	
                                         </td>
                                         <td class="text-center">
                                         	<a href="" title="Hold Order" class="cancel-order" ng-click="set_status(order.id, 4, module)" ng-if="order.status==2 || order.status==3"><i class="fa fa-close" aria-hidden="true"></i></a>
