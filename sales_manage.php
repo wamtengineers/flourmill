@@ -68,6 +68,24 @@ if(count( $status ) > 0){
 	$extra .= "and (".implode( " or ", $sts ).")";
 	$is_search=true;
 }
+if(isset($_GET["transaction_id"])){
+	$_SESSION["sales"]["list"]["transaction_id"]=$_GET[ "transaction_id" ];
+}
+if(isset($_SESSION["sales"]["list"]["transaction_id"])){
+	$transaction_id=$_SESSION["sales"]["list"]["transaction_id"];
+}
+else{
+	$transaction_id="";
+}	
+if(!empty($transaction_id)){
+	if( $transaction_id==1 ){
+		$extra.=" and transaction_id <> 0";
+	}
+	else{
+		$extra.=" and transaction_id = 0";
+	}
+	$is_search=true;
+}
 if(isset($_GET["q"])){
 	$q=slash($_GET["q"]);
 	$_SESSION["sales"]["list"]["q"]=$q;
