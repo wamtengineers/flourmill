@@ -124,7 +124,7 @@ $(document).ready(function() {
 <script type="text/javascript" src="js/pos.angular.js"></script>
 <script type="text/javascript" src="js/addedit.angular.js"></script>
 <script type="text/javascript" src="js/gatepass.angular.js"></script>
-
+<script type="text/javascript" src="js/manager_dashboard.angular.js"></script>
 
 <!-- EXTERNAL SCRIPTS FOR CALLMENICK.COM, PLEASE DO NOT INCLUDE -->
 <script>
