@@ -53,8 +53,8 @@ $page="index";
                                 <table width="100%" class="table table-hover list">
                                     <thead>
                                         <tr>
-                                        	<th width="5%">S.No</th>
-                                            <th width="5%">Token No.</th>
+                                        	<th width="5%">Token No.</th>
+                                            <th width="5%">S.No</th>
                                             <th width="5%">Time</th>
                                             <th width="12%">Account</th>
                                             <th width="25%">Items</th>
@@ -67,8 +67,8 @@ $page="index";
                                         </tr>
                                     </thead>
                                     <tr ng-repeat="order in get_orders( module )" ng-class="[{'alert-danger': order.status==0}, {'alert-warning': order.status==2}, {'alert-info': order.status==1}]">
-                                    <td class="text-center">{{ order.token_number }}</td>
-                                        <td class="text-center" style="font-weight:bolder">{{ order.id }}</td>
+                                    <td class="text-center">{{ order.id }}</td>
+                                        <td class="text-center" style="font-weight:bolder">{{ order.token_number }}</td>
                                         <td>{{ order.datetime_added }}</td>
                                         <td>{{ get_field( order.account_id, accounts, "title" ) }}</td>
                                         <td>
