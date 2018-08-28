@@ -296,7 +296,7 @@ $page="index";
                                             <tr>
                                                 <!--<td class="text-center icon-row"><input type="text" ng-model="transaction.datetime_added" class="date-timepicker angular-datetimepicker" style="width:100%;"></td>-->
                                                 <td>
-                                                    <select style="font-size: 12px; color:#000" ng-model="transaction.account_id" chosen>
+                                                    <select style="font-size: 12px; color:#000" ng-model="new_transaction.account_id" chosen>
                                                         <option value="0">Select Account</option>
                                                         <optgroup ng-repeat="account_type in account_types" label="{{ account_type.title }}">
                                                             <option ng-repeat="account in accounts|filter:{account_type_id: account_type.id}:1" value="{{account.id}}">{{account.title}}</option>
@@ -304,7 +304,7 @@ $page="index";
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <select style="font-size: 12px; color:#000" ng-model="transaction.reference_id" chosen>
+                                                    <select style="font-size: 12px; color:#000" ng-model="new_transaction.reference_id" chosen>
                                                         <option value="0">Select Account</option>
                                                         <optgroup ng-repeat="account_type in account_types" label="{{ account_type.title }}">
                                                             <option ng-repeat="account in accounts|filter:{account_type_id: account_type.id}:1" value="{{account.id}}">{{account.title}}</option>
@@ -312,10 +312,10 @@ $page="index";
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="text" id="amount" class="form-control text-right" placeholder="Amount" ng-model="transaction.amount">
+                                                    <input type="text" id="amount" class="form-control text-right" placeholder="Amount" ng-model="new_transaction.amount">
                                                 </td>
                                                 <td class="text-right" style="position:relative">
-                                                    <textarea class="form-control" placeholder="Details" ng-model="transaction.details"></textarea>
+                                                    <textarea class="form-control" placeholder="Details" ng-model="new_transaction.details"></textarea>
                                                 </td>
                                                 <td><input type="button" class="btn btn-default btn-l" value="Save" ng-click="add_transaction()"></td>
                                             </tr>
@@ -339,13 +339,13 @@ $page="index";
                                             <tr>
                                                 <!--<td class="text-center icon-row"><input type="text" ng-model="expense.datetime_added" class="date-timepicker angular-datetimepicker" data-controllerid="posController" style="width:100%;"></td>-->
                                                 <td>
-                                                    <select style="font-size: 12px; color:#000" ng-model="expense.expense_category_id" chosen>
+                                                    <select style="font-size: 12px; color:#000" ng-model="new_expense.expense_category_id" chosen>
                                                         <option value="0">Select Category</option>
                                                         <option ng-repeat="category in expense_categories" value="{{category.id}}">{{category.title}}</option>
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <select style="font-size: 12px; color:#000" ng-model="expense.account_id" chosen>
+                                                    <select style="font-size: 12px; color:#000" ng-model="new_expense.account_id" chosen>
                                                         <option value="0">Select Account</option>
                                                         <optgroup ng-repeat="account_type in account_types" label="{{ account_type.title }}">
                                                             <option ng-repeat="account in accounts|filter:{account_type_id: account_type.id}:1" value="{{account.id}}">{{account.title}}</option>
@@ -353,10 +353,10 @@ $page="index";
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="text" id="amount" class="form-control text-right" placeholder="Amount" ng-model="expense.amount">
+                                                    <input type="text" id="amount" class="form-control text-right" placeholder="Amount" ng-model="new_expense.amount">
                                                 </td>
                                                 <td class="text-right" style="position:relative">
-                                                    <textarea class="form-control" placeholder="Details" ng-model="expense.details"></textarea>
+                                                    <textarea class="form-control" placeholder="Details" ng-model="new_expense.details"></textarea>
                                                 </td>
                                                 <td><input type="button" class="btn btn-default btn-l" value="Save" ng-click="add_expense()"></td>
                                             </tr>

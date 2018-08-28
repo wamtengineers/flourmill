@@ -175,7 +175,7 @@ $page="index";
                                                 <td>{{ get_field( transaction.account_id, accounts, "title" ) }}</td>
                                                 <td>{{ get_field( transaction.reference_id, accounts, "title" ) }}</td>
                                                 <td class="text-right">{{ transaction.amount }}</td>
-                                                <td class="text-right" style="position:relative">{{ transaction.details }}</td>
+                                                <td style="position:relative">{{ transaction.details }}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -195,10 +195,10 @@ $page="index";
                                                 </tr>
                                             </thead>
                                             <tr ng-repeat="expense in expenses">
-                                                <td>{{ get_field( expense.expense_category_id, expense_category, "title" ) }}</td>
+                                                <td>{{ get_field( expense.expense_category_id, expense_categories, "title" ) }}</td>
                                                 <td>{{ get_field( expense.account_id, accounts, "title" ) }}</td>
-                                                <td>{{ expense.amount }}</td>
-                                                <td class="text-right" style="position:relative">{{ expense.details }}</td>
+                                                <td class="text-right">{{ expense.amount }}</td>
+                                                <td style="position:relative">{{ expense.details }}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -242,7 +242,6 @@ $page="index";
                                                 <td>Sales</td>
                                                 <td class="text-right">{{ account.total|currency:"":0 }}</td>
                                                 <td class="text-right">--</td>
-                                                <!--<td class="text-right">{{ petty_cash.balance+total_price( sales_orders )-total_price( sales_orders|filter:{status: 0}:1 ) - sum_dynamic( credit_accounts.sales, $index, 'total' ) + sum_dynamic( credit_accounts.sales, $index, 'payment' )|currency:"":0 }}</td>-->
                                             </tr>
                                         </table>
                                     </div>

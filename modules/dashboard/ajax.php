@@ -290,6 +290,7 @@ if( count( $_POST ) > 0 ) {
 							"id" => $r[ "id" ],
 							"account_id" => $r[ "account_id" ],
 							"expense_category_id" => $r[ "expense_category_id" ],
+							"expense_categories" => get_field( unslash($r["expense_category_id"]), "expense_category", "title" ),
 							"datetime_added" => date("h:i A", strtotime($r[ "datetime_added" ])),
 							"amount" => $r[ "amount" ],
 							"details" => unslash( $r[ "details" ] )

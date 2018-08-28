@@ -1,7 +1,6 @@
 angular.module('manager', ['ngAnimate', 'angularMoment', 'localytics.directives']).controller('managerController', 
 	function ($scope, $http, $interval, $filter) {
 		$scope.items = [];
-
 		$scope.sales_orders = [];
 		$scope.sales_revalidate = [];
 		$scope.purchase_orders = [];
@@ -41,8 +40,7 @@ angular.module('manager', ['ngAnimate', 'angularMoment', 'localytics.directives'
 		$scope.daily_sale = {};
 		$scope.daily_purchase = {};
 		$scope.new_order = {};
-		$scope.transaction = angular.copy( $scope.transaction_placeholder );
-		$scope.expense = angular.copy( $scope.expense_placeholder );
+		
 		$scope.sale_revalidate = angular.copy( $scope.sales_revalidate_placeholder );
 		$scope.updateDate = function(){
 			$scope.dt = $(".angular-datepicker").val();
@@ -95,8 +93,7 @@ angular.module('manager', ['ngAnimate', 'angularMoment', 'localytics.directives'
 					for( i = 0; i < $scope.accounts.length; i++ ) {
 						if( $scope.accounts[ i ].is_petty_cash == 1 ) {
 							$scope.petty_cash = $scope.accounts[ i ];
-							//$scope.new_order_placeholder.payment_account_id = $scope.petty_cash.id
-							//$scope.new_order_placeholder.fare_of_vehicle_payment_account_id = $scope.petty_cash.id
+							
 							$scope.transaction_placeholder.reference_id = $scope.petty_cash.id
 							$scope.expense_placeholder.account_id = $scope.petty_cash.id
 						}
@@ -107,7 +104,7 @@ angular.module('manager', ['ngAnimate', 'angularMoment', 'localytics.directives'
 							$scope.daily_purchase = $scope.accounts[ i ];
 						}
 					}
-					//$scope.new_order = angular.copy( $scope.new_order_placeholder );
+				
 					$scope.transaction = angular.copy( $scope.transaction_placeholder );
 					$scope.expense = angular.copy( $scope.expense_placeholder );
 				}

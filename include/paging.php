@@ -26,8 +26,8 @@ function pages_list($rowsPerPage, $table, $qr="", $pageNum){
 	global $dblink;
 	if($qr==""){
 		$query   = "SELECT COUNT(*) AS numrows FROM $table";
-		$result  = mysql_query($query) or die('Error, query failed');
-		$row     = mysql_fetch_array($result);
+		$result  = doquery($query, $dblink) or die('Error, query failed');
+		$row     = dofetch($result);
 		$total_rows = $row['numrows'];
 	}
 	else{

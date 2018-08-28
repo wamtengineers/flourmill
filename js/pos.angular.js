@@ -58,7 +58,7 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			"fare_of_vehicle_payment_account_id" : "0",
 			"cnf": "",
 		};	
-		$scope.transaction_placeholder = {
+		$scope.new_transaction = {
 			"id": "",
 			"datetime_added": "",
 			"account_id": "",
@@ -66,13 +66,12 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			"amount": "",
 			"details": "",
 		};
-		$scope.expense_placeholder = {
-			"id": "",
-			"datetime_added": "",
-			"account_id": "",
-			"expense_category_id": "",
-			"amount": "",
+		$scope.new_expense = {
 			"details": "",
+			"amount": "",
+			"account_id": "",
+			"currency_id": "",
+			"expense_category_id": ""
 		};
 		$scope.sales_revalidate_placeholder = {
 			"id": "",
@@ -82,8 +81,6 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			"ts": ""
 		};
 		$scope.new_order = {};
-		$scope.transaction = angular.copy( $scope.transaction_placeholder );
-		$scope.expense = angular.copy( $scope.expense_placeholder );
 		$scope.sale_revalidate = angular.copy( $scope.sales_revalidate_placeholder );
 		$scope.updateDate = function(){
 			$scope.dt = $(".angular-datepicker").val();
@@ -342,19 +339,22 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 		}
 		$scope.add_expense = function(){
 			if( $scope.processing == false ) {
-				if( $scope.expense.expense_category_id == "" || $scope.expense.account_id == "" || $scope.expense.amount <= 0 ){
-					alert("Enter Category, Account and Amount.");
+				if( $scope.new_expense.expense_category_id == "" || $scope.new_expense.account_id == "" || $scope.new_expense.amount <= 0 ){
+					alert("Enter Expense Category, Account and Amount.");
 				}
 				else{
 					$scope.processing = true;
-					$scope.wctAJAX( {action: 'add_expense', expense: JSON.stringify($scope.expense)}, function( response ){
+					$scope.wctAJAX( {action: 'add_expense', expense: JSON.stringify($scope.new_expense)}, function( response ){
 						$scope.processing = false;
 						if( response.status == 1 ) {
-							if( !$scope.expense.id ){
-								$scope.expense.unshift(response.expense);
-							}
-							$scope.expenses = angular.copy( $scope.expense_placeholder );
-														
+							$scope.new_expense = {
+								"details": "",
+								"amount": 0,
+								"account_id": "",
+								"currency_id": "",
+								"expense_category_id": ""
+							};
+							$scope.expenses.unshift(response.expense);
 						}
 						else{
 							alert(response.message);
@@ -365,22 +365,23 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 		}
 		$scope.add_transaction = function(){
 			if( $scope.processing == false ) {
-				if( $scope.transaction.reference_id == "" || $scope.transaction.account_id == "" || $scope.transaction.amount <= 0 ){
+				if( $scope.new_transaction.reference_id == "" || $scope.new_transaction.account_id == "" || $scope.new_transaction.amount <= 0 ){
 					alert("Enter Account and Amount.");
-				}
-				if( $scope.transaction.amount <= 0 ){
-					alert("Enter Amount.");
 				}
 				else{
 					$scope.processing = true;
-					$scope.wctAJAX( {action: 'add_transaction', transaction: JSON.stringify($scope.transaction)}, function( response ){
+					$scope.wctAJAX( {action: 'add_transaction', transaction: JSON.stringify($scope.new_transaction)}, function( response ){
 						$scope.processing = false;
 						if( response.status == 1 ) {
-							if( !$scope.transaction.id ){
-								$scope.transaction.unshift(response.transaction);
-							}
-							$scope.transactions = angular.copy( $scope.transaction_placeholder );
-														
+							$scope.new_transaction = {
+								"id": "",
+								"datetime_added": "",
+								"account_id": "",
+								"reference_id": "",
+								"amount": 0,
+								"details": "",
+							};
+							$scope.transactions.unshift(response.transaction);
 						}
 						else{
 							alert(response.message);
