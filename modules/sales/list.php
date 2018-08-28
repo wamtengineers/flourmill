@@ -15,7 +15,7 @@ if(!defined("APP_START")) die("No Direct Access");
         </div>
   	</div>
 </div>
-<ul class="topstats clearfix search_filter"<?php if($is_search) echo ' style="display: block"';?>>
+<ul class="topstats clearfix search_filter" style="display:block;">
 	<li class="col-xs-12 col-lg-12 col-sm-12">
         <div>
         	<form class="form-horizontal" action="" method="get">

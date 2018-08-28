@@ -8,21 +8,24 @@ $rs = doquery( $sql, $dblink );
 h1, h2, h3, p {
     margin: 0 0 10px;
 }
-
+h1,h2{
+	font-size:14px;
+	margin:5px 0;
+}
 body {
     margin:  0;
     font-family:  Arial;
-    font-size:  11px;
+    font-size:  10px;
 }
 .head th, .head td{ border:0;}
 th, td {
     border: solid 1px #000;
-    padding: 5px 5px;
-    font-size: 11px;
+    padding: 2px 5px;
+    font-size: 10px;
 	vertical-align:top;
 }
 table table th, table table td{
-	padding:3px;
+	padding:2px;
 }
 table {
     border-collapse:  collapse;
@@ -154,7 +157,7 @@ table {
         <th colspan="6" style="text-align:right;">Total</th>
         <th style="text-align:right;"><?php echo curr_format( $total_items );?></th>
         <th style="text-align:right;"><?php echo curr_format( $total_less_weight_item );?></th>
-        <th style="text-align:right;"><?php echo curr_format( $total_items )-curr_format( $total_less_weight_item );?></th>
+        <th style="text-align:right;"><?php echo curr_format( $total_items-$total_less_weight_item );?></th>
         <th style="text-align:right;"><?php echo curr_format($rate_total);?></th>
         <th style="text-align:right;"><?php echo curr_format($total_price);?></th>
         <th style="text-align:right;"><?php echo curr_format($fov_total);?></th>

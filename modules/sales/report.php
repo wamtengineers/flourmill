@@ -6,23 +6,26 @@ $rs = doquery( $sql, $dblink );
 	?>
 <style>
 h1, h2, h3, p {
-    margin: 0 0 10px;
+    margin: 0 0 5px;
 }
-
+h1,h2{
+	font-size:14px;
+	margin:5px 0;
+}
 body {
     margin:  0;
     font-family:  Arial;
-    font-size:  11px;
+    font-size:  10px;
 }
 .head th, .head td{ border:0;}
 th, td {
     border: solid 1px #000;
-    padding: 5px 5px;
+    padding: 2px 5px;
     font-size: 11px;
 	vertical-align:top;
 }
 table table th, table table td{
-	padding:3px;
+	padding:2px;
 }
 table {
     border-collapse:  collapse;
@@ -34,11 +37,14 @@ table {
 <body>
 <table width="100%" cellspacing="0" cellpadding="0">
 	<tr class="head">
-        <th colspan="9">
+        <th colspan="10">
             <h1><?php echo get_config( 'site_title' )?></h1>
             <h2>SALES LIST</h2>
             <p>
                 <?php
+				if( $transaction_id==2 ){
+                    echo " Credit Sale";
+                }
                 if( !empty( $date_from ) || !empty( $date_to ) ){
                     echo "<br />Date";
                 }

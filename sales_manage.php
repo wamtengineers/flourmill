@@ -15,7 +15,6 @@ else{
 }
 $q="";
 $extra='';
-$is_search=false;
 if(isset($_GET["date_from"])){
 	$date_from=slash($_GET["date_from"]);
 	$_SESSION["sales"]["list"]["date_from"]=$date_from;

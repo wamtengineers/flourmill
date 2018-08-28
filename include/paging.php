@@ -4,7 +4,7 @@ if(isset($_GET["rows"]))
 if(isset($_SESSION["rows"]))
 	$rows=$_SESSION["rows"];
 else
-	$rows=1000;
+	$rows=25;
 if(isset($_GET['page'])){
 	$pageNum = $_GET['page'];
 }
@@ -89,6 +89,7 @@ function pages_list($rowsPerPage, $table, $qr="", $pageNum){
 		$numrows.="selected";
 		$numrows.=">1000</option>";
 		$numrows.="</select>";
+	
 	}
 	else
 		$numrows="";

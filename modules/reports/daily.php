@@ -19,14 +19,36 @@ $order_by = "datetime_added";
 $order = "desc";
 $orderby = $order_by." ".$order;
 ?>
+<style>
+h1, h2, h3, p {
+    margin: 0 0 10px;
+}
+h1,h2{
+	font-size:14px;
+	margin:5px 0;
+}
+body {
+    margin:  0;
+    font-family:  Arial;
+    font-size:  10px;
+}
+table table th, table table td{
+	padding:5px;
+}
+table {
+    border-collapse:  collapse;
+	width:100%;
+}
+</style>
 <div class="page-header">
 	<h1 class="title">Reports</h1>
   	<ol class="breadcrumb">
-    	<li class="active">Sales report</li>
+    	<li class="active">Daily Report</li>
   	</ol>
   	<div class="right">
     	<div class="btn-group" role="group" aria-label="..."> 
         	<a id="topstats" class="btn btn-light" href="#"><i class="fa fa-search"></i></a> 
+            <a class="btn print-btn" href="report_manage.php?tab=daily_print"><i class="fa fa-print" aria-hidden="true"></i></a>  
         </div>
   	</div>
 </div>
@@ -36,10 +58,8 @@ $orderby = $order_by." ".$order;
         	<form class="form-horizontal" action="" method="get">
                 <span class="col-sm-1 text-to">Date</span>
                 <div class="col-sm-2">
-                    <input type="text" title="Enter Date From" name="date" id="date" placeholder="" class="form-control date-picker"  value="<?php echo $date?>" >
+                	<input type="text" title="Enter Date From" name="date" id="date" placeholder="" class="form-control date-picker"  value="<?php echo $date?>">
                 </div>
-                
-                
                 <div class="col-sm-3 text-left">
                     <input type="button" class="btn btn-danger btn-l reset_search" value="Reset" alt="Reset Record" title="Reset Record" />
                     <input type="submit" class="btn btn-default btn-l" value="Search" alt="Search Record" title="Search Record" />
@@ -52,56 +72,35 @@ $orderby = $order_by." ".$order;
 	<table class="table table-hover list">
     	<thead>
             <tr>
-                <th width="5%" class="text-center">S.no</th>
-                <th>Date</th>
-                <th>Customer Name</th>
-                <th class="text-right">Total Items</th>
-                <th class="text-right" >Price</th>
-    
-                <th class="text-right">Net Price</th>
-            </tr>
-            <tr class="head">
-                <th colspan="3" class="text-right">Total</th>
-                <?php
-					$sql="select (sum(quantity), sum(unit_price), sum(total_price) from sales_items where sales_id = sales.id) from sales where 1 $extra and status=1 order by $orderby";
-					$total=dofetch(doquery($sql, $dblink));
-				?>
-                <th class="text-right"><?php echo $total[ "sum(quantity)" ]?></th>
-                <th class="text-right">Rs. <?php echo curr_format($total[ "sum(unit_price)" ])?></th>
-     
-                <th class="text-right" >Rs. <?php echo curr_format($total[ "sum(total_price)" ])?></th>
+                <th width="5%" style="text-align:center">S#</th>
+                <th width="15%">Date</th>
+                <th width="10%">Token Number</th>
+                <th width="15%">Customer Name</th>
+                <th width="15%">Items</th>
+                <th width="8%">Packing</th>
+                <th width="10%" style="text-align:right;">Total Items</th>
+                <th width="10%" style="text-align:right;">Total Price</th>
+                <th width="10%" style="text-align:right;">Payment Amount</th>
+                <th style="text-align:center">Status</th>
             </tr>
     	</thead>
     	<tbody>
-			<?php 
-            $sql="select * from sales where 1 $extra order by $orderby";
-            $rs=show_page($rows, $pageNum, $sql);
-            if(numrows($rs)>0){
-                $sn=1;
-                while($r=dofetch($rs)){             
-                    ?>
-                    <tr>
-                        <td class="text-center"><?php echo $sn;?></td>
-                        
-                        <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
-                        <td><?php echo empty($r["customer_name"])?"":unslash($r["customer_name"]); ?></td>
-                        <td class="text-right"><?php echo unslash($r["total_items"]); ?></td>
-                        <td class="text-right">Rs. <?php echo curr_format(unslash($r["total_price"])); ?></td>
-                        <td class="text-right">Rs. <?php echo curr_format(unslash($r["discount"])); ?></td>
-                        <td class="text-right">Rs. <?php echo curr_format(unslash($r["net_price"])); ?></td>
-                    </tr>
-                    <?php 
-                    $sn++;
-                }
-            }
-            else{	
-                ?>
-                <tr>
-                    <td colspan="8"  class="no-record">No Result Found</td>
-                </tr>
-                <?php
-            }
-            ?>
+        	<tr>
+                <td style="text-align:center"></td>
+                <td style="text-align:left;"></td>
+                <td></td>
+                <td style="text-align:left;"></td>
+                <td></td>
+                <td style="text-align:right;">
+                </td>
+                <td style="text-align:right;"></td>
+                <td style="text-align:right;"></td>
+                <td style="text-align:right;"></td> 
+                <td class="text-center">
+                    
+                </td>
+            </tr>
     	</tbody>
   	</table>
 </div>
+
