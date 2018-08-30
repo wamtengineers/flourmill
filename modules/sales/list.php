@@ -126,8 +126,8 @@ if(!defined("APP_START")) die("No Direct Access");
                             <label for="<?php echo "rec_".$sn?>"></label></div>
                         </td>
                         <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
-                        <td><?php echo get_token_number( $r ); ?></td>
-                        <td><?php echo get_field($r["account_id"], "account","title"); ?></td>
+                        <td><?php echo $r[ "id" ]//get_token_number( $r ); ?></td>
+                        <td><?php echo unslash( $r[ "customer" ] ); ?></td>
                         <td>
                         	<?php echo $r[ "items" ];?>
                         </td>

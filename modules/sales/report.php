@@ -88,8 +88,8 @@ table {
             <tr>
                 <td style="text-align:center"><?php echo $sn++?></td>
                 <td style="text-align:left;"><?php echo datetime_convert($r["datetime_added"]); ?></td>
-                <td><?php echo get_token_number( $r ); ?></td>
-                <td style="text-align:left;"><?php echo get_field($r["account_id"], "account","title");?></td>
+                <td><?php echo $r[ "id" ]; ?></td>
+                <td style="text-align:left;"><?php echo unslash( $r[ "customer" ] ); ?></td>
                 <td>
                     <?php echo $r[ "items" ];?>
                 </td>

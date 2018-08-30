@@ -24,7 +24,7 @@ if(isset($_SESSION["sales"]["list"]["date_from"]))
 else
 	$date_from="";
 if($date_from != ""){
-	$extra.=" and datetime_added>='".datetime_dbconvert($date_from)."'";
+	$extra.=" and a.datetime_added>='".datetime_dbconvert($date_from)."'";
 	$is_search=true;
 }
 if(isset($_GET["date_to"])){
@@ -36,7 +36,7 @@ if(isset($_SESSION["sales"]["list"]["date_to"]))
 else
 	$date_to="";
 if($date_to != ""){
-	$extra.=" and datetime_added<'".datetime_dbconvert($date_to)."'";
+	$extra.=" and a.datetime_added<'".datetime_dbconvert($date_to)."'";
 	$is_search=true;
 }
 if(isset($_GET["account_id"])){
@@ -48,7 +48,7 @@ if(isset($_SESSION["sales"]["list"]["account_id"]))
 else
 	$account_id="";
 if(!empty($account_id)){
-	$extra.=" and account_id = '".$account_id."'";
+	$extra.=" and a.account_id = '".$account_id."'";
 	$is_search=true;
 }
 if(isset($_GET["status"])){
@@ -63,7 +63,7 @@ else{
 if(count( $status ) > 0){
 	$sts = array();
 	foreach( $status as $st )
-		$sts[] = "status='".$st."'";
+		$sts[] = "a.status='".$st."'";
 	$extra .= "and (".implode( " or ", $sts ).")";
 	$is_search=true;
 }
@@ -94,10 +94,10 @@ if(isset($_SESSION["sales"]["list"]["q"]))
 else
 	$q="";
 if(!empty($q)){
-	$extra.=" and (title like '%".$q."%' or items like '%".$q."%')";
+	$extra.=" and (c.title like '%".$q."%' or items like '%".$q."%')";
 	$is_search=true;
 }
-$order_by = "datetime_added";
+$order_by = "a.datetime_added";
 $order = "desc";
 if( isset($_GET["order_by"]) ){
 	$_SESSION["sales"]["list"]["order_by"]=slash($_GET["order_by"]);
@@ -112,7 +112,8 @@ if( isset( $_SESSION["sales"]["list"]["order"] ) ){
 	$order = $_SESSION["sales"]["list"]["order"];
 }
 $orderby = $order_by." ".$order;
-$sql="select * from (select a.*, b.title, amount, (select sum((quantity-less_weight)*if(rate=0,packing,1)) from sales_items where sales_id = a.id)-less_weight as total_items, (select group_concat(concat(quantity, ' &times ', packing, 'KG ', title) SEPARATOR '<br>') from sales_items left join items on sales_items.item_id = items.id where sales_id = a.id) as items, (select sum(total_price) from sales_items where sales_id = a.id)-discount as total_price from sales a left join account b on a.account_id = b.id left join transaction c on a.transaction_id = c.id ) as temp_table where 1 $extra order by $orderby";
+$sql="select * from (select a.*, b.title, amount, (select sum((quantity-less_weight)*if(rate=0,packing,1)) from sales_items where sales_id = a.id)-less_weight as total_items, (select group_concat(concat(quantity, ' &times ', packing, 'KG ', title) SEPARATOR '<br>') from sales_items left join items on sales_items.item_id = items.id where sales_id = a.id) as items, (select sum(total_price) from sales_items where sales_id = a.id)-discount as total_price from sales a left join account b on a.account_id = b.id left join transaction c on a.transaction_id = c.id ) as temp_table where 1 $extra order by $orderby 1";
+$sql = "SELECT a.*, d.title as customer, e.amount, sum((b.quantity-b.less_weight)*if(b.rate=0,b.packing,1))-a.less_weight as total_items, group_concat(concat(b.quantity, ' × ', b.packing, 'KG ', c.title) SEPARATOR '<br>') as items, sum(b.total_price)-a.discount as total_price FROM `sales` a left join sales_items b on a.id = b.sales_id left join items c on b.item_id = c.id left join account d on a.account_id = d.id left join transaction e on a.transaction_id = e.id where 1 $extra group by a.id order by $orderby";
 switch($tab){
 	case 'addedit':
 		include("modules/sales/addedit_do.php");
