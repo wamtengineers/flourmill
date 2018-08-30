@@ -116,15 +116,18 @@ if( count( $_POST ) > 0 ) {
 								doquery( "update ".$module." set brokery_id = '".$brokery_id."' where id = '".$order_id."'", $dblink );
 							}
 							if( !empty( $order->fare_of_vehicle_payment_account_id ) ) {
-								if( $order->cnf==1 && $module=='sales' ){
-									doquery( "insert into expense( datetime_added, expense_category_id, account_id, amount, details, added_by ) values( NOW(), '".get_config( "fare_category_id" )."', '".slash( $order->fare_of_vehicle_payment_account_id )."', '".slash( $order->fare_of_vehicle )."', 'Fare of Vehicle against ".$module." #".$order_id."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."' )", $dblink );
-									$fare_transaction_id = inserted_id();
+								if($order->fare_of_vehicle > 0){
+									if( $order->cnf==1 && $module=='sales' ){
+										doquery( "insert into expense( datetime_added, expense_category_id, account_id, amount, details, added_by ) values( NOW(), '".get_config( "fare_category_id" )."', '".slash( $order->fare_of_vehicle_payment_account_id )."', '".slash( $order->fare_of_vehicle )."', 'Fare of Vehicle against ".$module." #".$order_id."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."' )", $dblink );
+										$fare_transaction_id = inserted_id();
+									}
+									else{
+										doquery( "insert into transaction( datetime_added, account_id, reference_id, amount, details, added_by ) values( NOW(), '".slash( $order->account_id )."', '".slash( $order->fare_of_vehicle_payment_account_id )."', '".slash( $order->fare_of_vehicle )."', 'Fare of Vehicle against ".$module." #".$order_id."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."' )", $dblink );
+										$fare_transaction_id = inserted_id();
+									}
+									doquery( "update ".$module." set fare_transaction_id = '".$fare_transaction_id."' where id = '".$order_id."'", $dblink );
 								}
-								else{
-									doquery( "insert into transaction( datetime_added, account_id, reference_id, amount, details, added_by ) values( NOW(), '".slash( $order->account_id )."', '".slash( $order->fare_of_vehicle_payment_account_id )."', '".slash( $order->fare_of_vehicle )."', 'Fare of Vehicle against ".$module." #".$order_id."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."' )", $dblink );
-									$fare_transaction_id = inserted_id();
-								}
-								doquery( "update ".$module." set fare_transaction_id = '".$fare_transaction_id."' where id = '".$order_id."'", $dblink );
+								
 							}
 							$order = get_order( $order_id, $module );
 						}
