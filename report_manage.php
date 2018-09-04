@@ -6,7 +6,7 @@ include("include/paging.php");
 define("APP_START", 1);
 $filename = 'sales_manage.php';
 include("include/admin_type_access.php");
-$tab_array=array("daily", "general_journal","balance_sheet","general_journal_print", "income", "income_print", "trial_balance", "trial_balance_print","daily_print");
+$tab_array=array("daily", "general_journal","balance_sheet","general_journal_print", "income", "income_print", "trial_balance", "trial_balance_print","daily_print", "cashbook");
 if(isset($_REQUEST["tab"]) && in_array($_REQUEST["tab"], $tab_array)){
 	$tab=$_REQUEST["tab"];
 }
@@ -29,6 +29,9 @@ switch($tab){
 	break;
 	case 'daily_print':
 		include("modules/reports/daily_print.php");
+	break;
+	case 'cashbook':
+		include("modules/reports/cashbook_do.php");
 	break;
 }
 ?>
@@ -54,6 +57,9 @@ switch($tab){
 			break;
 			case 'trial_balance':
 				include("modules/reports/trial_balance.php");
+			break;
+			case 'cashbook':
+				include("modules/reports/cashbook.php");
 			break;
 		}
       ?>

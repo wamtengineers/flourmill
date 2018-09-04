@@ -35,7 +35,7 @@ table {
 </style>
 <table width="100%" cellspacing="0" cellpadding="0">
     <tr class="head">
-        <th colspan="6">
+        <th colspan="9">
             <h1><?php echo get_config( 'site_title' )?></h1>
             <h2>General Journal Report</h2>
             <p>
@@ -60,6 +60,9 @@ table {
         <th width="5%" align="center">S.no</th>
         <th>Date</th>
         <th>Details</th>
+        <th>Items</th>
+        <th align="right">Bags</th>
+        <th align="right">Rate</th>
         <th align="right">Debit</th>
         <th align="right">Credit</th>
         <th align="right">Balance</th>
@@ -74,6 +77,9 @@ table {
             <td><?php echo $order == 'desc'?'Closing':'Opening'?> Balance</td>
             <td></td>
             <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
             <td align="right"><?php echo curr_format( $balance )?></td>
         </tr>
 		<?php
@@ -85,6 +91,47 @@ table {
 					<td class="text-center"><?php echo $sn++;?></td>
 					<td><?php echo datetime_convert($r["datetime_added"]); ?></td>
 					<td><?php echo unslash($r["details"]); ?></td>
+                    <?php
+						if($r["type"]==0){
+							$sales = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales` a left join sales_items b on b.sales_id = a.id left join items c on b.item_id = c.id where a.id='".$r["id"]."'",$dblink));
+							?>
+                            <td><?php echo unslash($sales[ "title" ])."-".curr_format($sales[ "packing" ])."Kg";?></td>
+                            <td align="right"><?php echo $sales[ "quantity" ];?></td>
+                            <td align="right"><?php echo curr_format($sales[ "unit_price" ]);?></td>
+                        	<?php
+						}
+						elseif($r["type"]==1){
+							$sales_return = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales_return` a left join sales_return_items b on b.sales_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink));
+							?>
+                            <td><?php echo unslash($sales_return[ "title" ])."-".curr_format($sales_return[ "packing" ])."Kg";?></td>
+                            <td align="right"><?php echo $sales_return[ "quantity" ];?></td>
+                            <td align="right"><?php echo curr_format($sales_return[ "unit_price" ]);?></td>
+                        	<?php
+						}               
+						elseif($r["type"]==2){
+							$purchase = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `purchase` a left join purchase_items b on b.purchase_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink));
+							?>
+                            <td><?php echo unslash($purchase[ "title" ])."-".curr_format($purchase[ "packing" ])."Kg";?></td>
+                            <td align="right"><?php echo $purchase[ "quantity" ];?></td>
+                            <td align="right"><?php echo curr_format($purchase[ "unit_price" ]);?></td>
+                        	<?php
+						}
+						elseif($r["type"]==3){
+							$purchase_return = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `purchase_return` a left join purchase_return_items b on b.purchase_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink));
+							?>
+                        	<td><?php echo unslash($purchase[ "title" ])."-".curr_format($purchase[ "packing" ])."Kg";?></td>
+                            <td align="right"><?php echo $purchase[ "quantity" ];?></td>
+                            <td align="right"><?php echo curr_format($purchase[ "unit_price" ]);?></td>
+                       		<?php
+						}
+						else{
+							?>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        	<?php
+						}
+						?>
 					<td align="right"><?php echo curr_format($r["debit"]); ?></td>
 					<td align="right"><?php echo curr_format($r["credit"]); ?></td>
 					<td align="right"><?php if($order == 'asc'){$balance += ($r["debit"]-$r["credit"])*($order == 'desc'?'-1':1);} echo curr_format( $balance ); if($order == 'desc'){$balance += ($r["debit"]-$r["credit"])*($order == 'desc'?'-1':1);} ?></td>
@@ -96,8 +143,11 @@ table {
 				<tr>
                 	<td colspan="2"></td>
                     <td><?php echo $order != 'desc'?'Closing':'Opening'?> Balance</td>
-                    <td align="right"></td>
-                    <td align="right"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td align="right"><?php echo curr_format( $balance )?></td>
                 </tr>
                 <?php	
@@ -105,13 +155,13 @@ table {
             else{	
                 ?>
                 <tr>
-                    <td colspan="6"  class="no-record">No Result Found</td>
+                    <td colspan="9"  class="no-record">No Result Found</td>
                 </tr>
                 <?php
             }
             ?>
             <tr>
-            	<th colspan="3" align="right">Total</th>
+            	<th colspan="6" align="right">Total</th>
                 <th align="right"><?php echo curr_format($debit_total);?></th>
                 <th align="right"><?php echo curr_format($credit_total);?></th>
                 <th align="right"></th>

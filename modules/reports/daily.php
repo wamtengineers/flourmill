@@ -32,7 +32,7 @@ table {
 	width:100%;
 }
 .head{ display:none;}
-@media print{
+/*@media print{
 	body{ overflow:hidden;}
 	#top,.page-header,#footer{
 		display:none;
@@ -42,7 +42,7 @@ table {
 	.content{ padding:0;}
 	#footer.bottom_round_corners{ display:none;}
 	.head{ display:block;}
-}
+}*/
 </style>
 <div class="page-header">
 	<h1 class="title">Reports</h1>
