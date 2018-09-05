@@ -51,7 +51,7 @@ $main_sql[] = "select datetime_added, a.id, 0 as type, concat( 'Sales #', a.id) 
 
 $main_sql[] = "select datetime_added, a.id, 1 as type, concat( 'Sales Return #', a.id) as details, 0 as debit, (select sum(total_price) from sales_return_items where sales_return_id = a.id)-discount as credit from sales_return a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
-$main_sql[] = "select datetime_added, a.id, 2 as type, concat( 'Purchase #', a.id) as details, 0 as debit, (select sum(total_price) from purchase_items where purchase_id = a.id)-discount as credit from purchase a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
+$main_sql[] = "select datetime_added, a.id, 2 as type, concat( 'Purchase #', a.id) as details, 0 as debit, (select sum(total_price) from purchase_items where purchase_id = a.id)-discount as credit from purchase a left join account b on a.account_id=b.id where a.status = 1".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
 $main_sql[] = "select datetime_added, a.id, 3 as type, concat( 'Purchase Return #', a.id) as details, (select sum(total_price) from purchase_return_items where purchase_return_id = a.id)-discount as debit, 0 as credit from purchase_return a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
