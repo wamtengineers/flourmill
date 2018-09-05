@@ -47,13 +47,13 @@ if( isset( $_SESSION["reports"]["general_journal"]["order"] ) ){
 }
 $orderby = $order_by." ".$order;
 $main_sql = array();
-$main_sql[] = "select datetime_added, a.id, 0 as type, concat( 'Sales #', a.id) as details,  (select sum(total_price) from sales_items where sales_id = a.id)-discount as debit, 0 as credit from sales a left join account b on a.account_id=b.id where a.status != 0".(!empty($account_id)?" and account_id='".$account_id."'":"");
+$main_sql[] = "select datetime_added, a.id, 0 as type, concat( 'Sales #', a.id) as details,  (select sum(total_price) from sales_items where sales_id = a.id)-discount as debit, 0 as credit from sales a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
-$main_sql[] = "select datetime_added, a.id, 1 as type, concat( 'Sales Return #', a.id) as details, 0 as debit, (select sum(total_price) from sales_return_items where sales_return_id = a.id)-discount as credit from sales_return a left join account b on a.account_id=b.id where a.status != 0".(!empty($account_id)?" and account_id='".$account_id."'":"");
+$main_sql[] = "select datetime_added, a.id, 1 as type, concat( 'Sales Return #', a.id) as details, 0 as debit, (select sum(total_price) from sales_return_items where sales_return_id = a.id)-discount as credit from sales_return a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
-$main_sql[] = "select datetime_added, a.id, 2 as type, concat( 'Purchase #', a.id) as details, 0 as debit, (select sum(total_price) from purchase_items where purchase_id = a.id)-discount as credit from purchase a left join account b on a.account_id=b.id where a.status != 0".(!empty($account_id)?" and account_id='".$account_id."'":"");
+$main_sql[] = "select datetime_added, a.id, 2 as type, concat( 'Purchase #', a.id) as details, 0 as debit, (select sum(total_price) from purchase_items where purchase_id = a.id)-discount as credit from purchase a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
-$main_sql[] = "select datetime_added, a.id, 3 as type, concat( 'Purchase Return #', a.id) as details, (select sum(total_price) from purchase_return_items where purchase_return_id = a.id)-discount as debit, 0 as credit from purchase_return a left join account b on a.account_id=b.id where a.status != 0".(!empty($account_id)?" and account_id='".$account_id."'":"");
+$main_sql[] = "select datetime_added, a.id, 3 as type, concat( 'Purchase Return #', a.id) as details, (select sum(total_price) from purchase_return_items where purchase_return_id = a.id)-discount as debit, 0 as credit from purchase_return a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
 $main_sql[] = "select datetime_added, a.id, 4 as type, if(details='', concat( 'Transfer to account ', title ), concat(title, ': ', details)) as details, amount as debit, amount as credit from transaction a left join account b on a.account_id=b.id where a.status = 1 and account_id = reference_id and reference_id='".$account_id."'";
 
