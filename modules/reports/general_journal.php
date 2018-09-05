@@ -103,12 +103,14 @@ if(!defined("APP_START")) die("No Direct Access");
                         <td><?php echo unslash($r["details"]); ?></td>
                         <?php
 						if($r["type"]==0){
-							$sales = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales` a left join sales_items b on b.sales_id = a.id left join items c on b.item_id = c.id where a.id='".$r["id"]."'",$dblink));
+							$sales = doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales` a left join sales_items b on b.sales_id = a.id left join items c on b.item_id = c.id where a.id='".$r["id"]."'",$dblink);
+							while($sale=dofetch($sales)){  
 							?>
-                            <td><?php echo unslash($sales[ "title" ])."-".curr_format($sales[ "packing" ])."Kg";?></td>
-                            <td class="text-right"><?php echo $sales[ "quantity" ];?></td>
-                            <td class="text-right"><?php echo curr_format($sales[ "unit_price" ]);?></td>
+                            <td><?php echo unslash($sales[ "title" ])."-".curr_format($sale[ "packing" ])."Kg";?></td>
+                            <td class="text-right"><?php echo $sale[ "quantity" ];?></td>
+                            <td class="text-right"><?php echo curr_format($sale[ "unit_price" ]);?></td>
                         	<?php
+							}
 						}
 						elseif($r["type"]==1){
 							$sales_return = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales_return` a left join sales_return_items b on b.sales_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink));
