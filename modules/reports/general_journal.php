@@ -56,7 +56,7 @@ if(!defined("APP_START")) die("No Direct Access");
             <tr>
                 <th width="5%" class="text-center">S.no</th>
                 <th>
-                	<a href="report_manage.php?tab=general_journal&order_by=datetime_added&order=<?php echo $order=="asc"?"desc":"asc"?>" class="sorting">
+                	<a href="" class="sorting">
                     	Date
                         <?php
 						if( $order_by == "datetime_added" ) {

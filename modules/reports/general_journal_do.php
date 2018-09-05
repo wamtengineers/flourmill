@@ -47,7 +47,7 @@ if( isset( $_SESSION["reports"]["general_journal"]["order"] ) ){
 }
 $orderby = $order_by." ".$order;
 $main_sql = array();
-$main_sql[] = "select datetime_added, a.id, 0 as type, concat( 'Sales #', a.id) as details,  (select sum(total_price) from sales_items where sales_id = a.id)-discount as debit, 0 as credit from sales a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
+$main_sql[] = "select datetime_added, a.id, 0 as type, concat( 'Sales #', a.id) as details,  (select sum(total_price) from sales_items where sales_id = a.id)-discount as debit, 0 as credit from sales a left join account b on a.account_id=b.id where a.status = 1".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
 $main_sql[] = "select datetime_added, a.id, 1 as type, concat( 'Sales Return #', a.id) as details, 0 as debit, (select sum(total_price) from sales_return_items where sales_return_id = a.id)-discount as credit from sales_return a left join account b on a.account_id=b.id where a.status = 2".(!empty($account_id)?" and account_id='".$account_id."'":"");
 
