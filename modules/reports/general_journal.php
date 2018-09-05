@@ -106,7 +106,7 @@ if(!defined("APP_START")) die("No Direct Access");
 							$sales = doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales` a left join sales_items b on b.sales_id = a.id left join items c on b.item_id = c.id where a.id='".$r["id"]."'",$dblink);
 							while($sale=dofetch($sales)){  
 							?>
-                            <td><?php echo unslash($sales[ "title" ])."-".curr_format($sale[ "packing" ])."Kg";?></td>
+                            <td><?php echo unslash($sale[ "title" ])."-".curr_format($sale[ "packing" ])."Kg";?></td>
                             <td class="text-right"><?php echo $sale[ "quantity" ];?></td>
                             <td class="text-right"><?php echo curr_format($sale[ "unit_price" ]);?></td>
                         	<?php
