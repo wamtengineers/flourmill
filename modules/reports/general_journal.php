@@ -104,43 +104,43 @@ if(!defined("APP_START")) die("No Direct Access");
                         <?php
 						if($r["type"]==0){
 							$sales = doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales` a left join sales_items b on b.sales_id = a.id left join items c on b.item_id = c.id where a.id='".$r["id"]."'",$dblink);
-							while($sale=dofetch($sales)){  
+							$sale=dofetch($sales)
 							?>
                             <td><?php echo unslash($sale[ "title" ])."-".curr_format($sale[ "packing" ])."Kg";?></td>
                             <td class="text-right"><?php echo $sale[ "quantity" ];?></td>
                             <td class="text-right"><?php echo curr_format($sale[ "unit_price" ]);?></td>
                         	<?php
-							}
+							
 						}
 						elseif($r["type"]==1){
 							$sales_return = doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales_return` a left join sales_return_items b on b.sales_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
-							while($sale_return=dofetch($sales_return)){
+							$sale_return=dofetch($sales_return)
 							?>
                             <td><?php echo unslash($sale_return[ "title" ])."-".curr_format($sale_return[ "packing" ])."Kg";?></td>
                             <td class="text-right"><?php echo $sale_return[ "quantity" ];?></td>
                             <td class="text-right"><?php echo curr_format($sale_return[ "unit_price" ]);?></td>
                         	<?php
-							}
+							
 						}               
 						elseif($r["type"]==2){
 							$purchases = doquery("SELECT a.*, b.quantity-b.less_weight as net_weight, b.packing, b.unit_price, c.title FROM `purchase` a left join purchase_items b on b.purchase_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
-							while($purchase=dofetch($purchases)){
+							$purchase=dofetch($purchases)
 							?>
                             <td><?php echo unslash($purchase[ "title" ])."-".curr_format($purchase[ "packing" ])."Kg";?></td>
                             <td class="text-right"><?php echo $purchase[ "net_weight" ];?></td>
                             <td class="text-right"><?php echo curr_format($purchase[ "unit_price" ]);?></td>
                         	<?php
-							}
+							
 						}
 						elseif($r["type"]==3){
 							$purchases_return = doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `purchase_return` a left join purchase_return_items b on b.purchase_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
-							while($purchase_return=dofetch($purchases_return)){
+							$purchase_return=dofetch($purchases_return)
 							?>
                         	<td><?php echo unslash($purchase_return[ "title" ])."-".curr_format($purchase_return[ "packing" ])."Kg";?></td>
                             <td class="text-right"><?php echo $purchase_return[ "quantity" ];?></td>
                             <td class="text-right"><?php echo curr_format($purchase_return[ "unit_price" ]);?></td>
                        		<?php
-							}
+							
 						}
 						else{
 							?>
