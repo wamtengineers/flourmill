@@ -189,7 +189,7 @@ footer {
 </style>
 		<script>
 		function print_page(){
-			printer = '\\\\GHOURI\\<?php echo get_config( 'thermal_printer_title' );?>';
+			printer = '<?php echo get_config( 'thermal_printer_title' );?>';
 			printers = jsPrintSetup.getPrintersList().split(",");
 			if( printers.indexOf( printer ) !== -1 ) {
 				jsPrintSetup.setPrinter( printer );
