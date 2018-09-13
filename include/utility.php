@@ -1248,7 +1248,7 @@ function get_order( $id, $module = 'sales' ) {
 function get_token_number( $order, $module = 'sales' ){
 	global $dblink;
 	$dt = get_last_closing_dt( $order["datetime_added"] );
-    $order_id = dofetch(doquery("select count(1) from ".$module." where datetime_added >='".$dt."' and datetime_added<='".$order["datetime_added"]."' and id < '".$order["id"]."'", $dblink ));
+    $order_id = dofetch(doquery("select count(1) from ".$module." where datetime_added >='".$dt."' and datetime_added<='".$order["datetime_added"]."' and id < '".$order["id"]."'".($order["account_id"]==get_config( 'dailysale_customer_id' )?" and account_id = '".get_config( 'dailysale_customer_id' )."'":" and account_id <> '".get_config( 'dailysale_customer_id' )."'")."", $dblink ));
 	$order_id = $order_id[ "count(1)" ] + 1;
 	return $order_id;//($order["account_id"]==get_config( 'dailysale_customer_id' )?"":"*").$order_id;
 }

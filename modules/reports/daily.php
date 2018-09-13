@@ -75,7 +75,7 @@ table {
 <div class="panel-body table-responsive">
 	<table class="table table-hover list">
     	<tr class="head">
-        	<th colspan="10" width="100%">
+        	<th colspan="11" width="100%">
                     <?php
                     if( !empty( $date ) ){
                         echo " Date ".$date;
@@ -84,7 +84,7 @@ table {
             </th>
         </tr>
         <tr>
-            <th colspan="10">SALES</th>
+            <th colspan="10">CASH SALES</th>
         </tr>
         <tr>
             <th width="5%" style="text-align:center">S#</th>
@@ -93,13 +93,14 @@ table {
             <th width="15%">Customer Name</th>
             <th width="15%">Items</th>
             <th width="8%">Packing</th>
+            <th width="10%" style="text-align:right;">Rate</th>
             <th width="10%" style="text-align:right;">Total Items</th>
             <th width="10%" style="text-align:right;">Total Price</th>
             <th width="10%" style="text-align:right;">Payment Amount</th>
             <th style="text-align:center;">Status</th>
         </tr>
 		<?php
-		$sales=doquery("select * from (select a.*, b.title, amount, (select sum((quantity-less_weight)*if(rate=0,packing,1)) from sales_items where sales_id = a.id)-less_weight as total_items, (select group_concat(concat(quantity, ' &times ', packing, 'KG ', title) SEPARATOR '<br>') from sales_items left join items on sales_items.item_id = items.id where sales_id = a.id) as items, (select sum(total_price) from sales_items where sales_id = a.id)-discount as total_price from sales a left join account b on a.account_id = b.id left join transaction c on a.transaction_id = c.id ) as temp_table where 1 and datetime_added BETWEEN '".date('Y-m-d',strtotime(date_dbconvert($date)))." 00:00:00' AND '".date('Y-m-d',strtotime(date_dbconvert($date)))." 23:59:59' order by datetime_added desc", $dblink);
+		$sales=doquery("select * from (select a.*, b.title, amount, (select sum((quantity-less_weight)*if(rate=0,packing,1)) from sales_items where sales_id = a.id)-less_weight as total_items, (select group_concat(concat(quantity, ' &times ', packing, 'KG ', title) SEPARATOR '<br>') from sales_items left join items on sales_items.item_id = items.id where sales_id = a.id) as items, (select sum(total_price) from sales_items where sales_id = a.id)-discount as total_price from sales a left join account b on a.account_id = b.id left join transaction c on a.transaction_id = c.id ) as temp_table where account_id='".get_config("dailysale_customer_id")."' and datetime_added BETWEEN '".date('Y-m-d',strtotime(date_dbconvert($date)))." 00:00:00' AND '".date('Y-m-d',strtotime(date_dbconvert($date)))." 23:59:59' order by datetime_added asc", $dblink);
 		$total_items = $total_price = $payment_amount = 0;
         if(numrows($sales)>0){
             $sn=1;
@@ -120,7 +121,15 @@ table {
                         <?php 
                             $packing = doquery("select * from sales_items where sales_id = '".$sale["id"]."'", $dblink);
                              while($pack=dofetch($packing)){
-                                echo curr_format($pack["packing"]). " KG". " , ";
+                                echo curr_format($pack["packing"]). " KG". " <br> ";
+                             }
+                        ?>
+                    </td>
+                    <td style="text-align:right;">
+                    	<?php 
+                            $rate = doquery("select unit_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($rate=dofetch($rate)){
+                                echo curr_format($rate["unit_price"])." <br>";
                              }
                         ?>
                     </td>
@@ -152,7 +161,91 @@ table {
     	}
     	?>
          <tr>
-            <th colspan="6" style="text-align:right;">Total</th>
+            <th colspan="7" style="text-align:right;">Total</th>
+            <th style="text-align:right;"><?php echo curr_format($total_items);?></th>
+            <th style="text-align:right;"><?php echo curr_format($total_price);?></th>
+            <th style="text-align:right;"><?php echo curr_format($payment_amount);?></th>
+            <th></th>
+        </tr>
+        <tr>
+            <th colspan="11">CREDIT SALES</th>
+        </tr>
+        <tr>
+            <th width="5%" style="text-align:center">S#</th>
+            <th width="15%">Date/Time</th>
+            <th width="10%">Token Number</th>
+            <th width="15%">Customer Name</th>
+            <th width="15%">Items</th>
+            <th width="8%">Packing</th>
+            <th width="10%" style="text-align:right;">Rate</th>
+            <th width="10%" style="text-align:right;">Total Items</th>
+            <th width="10%" style="text-align:right;">Total Price</th>
+            <th width="10%" style="text-align:right;">Payment Amount</th>
+            <th style="text-align:center;">Status</th>
+        </tr>
+		<?php
+		$sales=doquery("select * from (select a.*, b.title, amount, (select sum((quantity-less_weight)*if(rate=0,packing,1)) from sales_items where sales_id = a.id)-less_weight as total_items, (select group_concat(concat(quantity, ' &times ', packing, 'KG ', title) SEPARATOR '<br>') from sales_items left join items on sales_items.item_id = items.id where sales_id = a.id) as items, (select sum(total_price) from sales_items where sales_id = a.id)-discount as total_price from sales a left join account b on a.account_id = b.id left join transaction c on a.transaction_id = c.id ) as temp_table where account_id<>'".get_config("dailysale_customer_id")."' and datetime_added BETWEEN '".date('Y-m-d',strtotime(date_dbconvert($date)))." 00:00:00' AND '".date('Y-m-d',strtotime(date_dbconvert($date)))." 23:59:59' order by datetime_added asc", $dblink);
+		$total_items = $total_price = $payment_amount = 0;
+        if(numrows($sales)>0){
+            $sn=1;
+            while($sale=dofetch($sales)){
+				$total_items += $sale["total_items"];
+				$total_price += $sale["total_price"];
+				$payment_amount += $sale["amount"];
+        		?>
+                <tr>
+                    <td style="text-align:center"><?php echo $sn++?></td>
+                    <td style="text-align:left;"><?php echo datetime_convert($sale["datetime_added"]); ?></td>
+                    <td><?php echo get_token_number( $sale ); ?></td>
+                    <td style="text-align:left;"><?php echo get_field($sale["account_id"], "account","title");?></td>
+                    <td>
+                        <?php echo $sale[ "items" ];?>
+                    </td>
+                    <td style="text-align:right;">
+                        <?php 
+                            $packing = doquery("select * from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($pack=dofetch($packing)){
+                                echo curr_format($pack["packing"]). " KG". " <br> ";
+                             }
+                        ?>
+                    </td>
+                    <td style="text-align:right;">
+                    	<?php 
+                            $rate = doquery("select unit_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($rate=dofetch($rate)){
+                                echo curr_format($rate["unit_price"])." <br>";
+                             }
+                        ?>
+                    </td>
+                    <td style="text-align:right;"><?php echo curr_format($sale["total_items"]); ?></td>
+                    <td style="text-align:right;"><?php echo curr_format($sale["total_price"]); ?></td>
+                    <td style="text-align:right;"><?php echo curr_format($sale["amount"]); ?></td> 
+                    <td class="text-center">
+                        <?php
+                        if($sale["status"]==0){
+                            ?>
+                            <span class="order-status cancel">Cancelled</span>
+                            <?php
+                        }
+                        elseif($sale["status"]==1){
+                            ?>
+                            <span class="order-status dispatch">Dispatched</span>
+                            <?php
+                        }
+                        elseif($sale["status"]==2){
+                            ?>
+                            <span class="order-status deliver">Delivering</span>
+                            <?php
+                        }
+                        ?>
+                    </td>
+                </tr>
+             	<?php
+        	}
+    	}
+    	?>
+         <tr>
+            <th colspan="7" style="text-align:right;">Total</th>
             <th style="text-align:right;"><?php echo curr_format($total_items);?></th>
             <th style="text-align:right;"><?php echo curr_format($total_price);?></th>
             <th style="text-align:right;"><?php echo curr_format($payment_amount);?></th>
@@ -286,10 +379,22 @@ table {
             <th class="text-right" width="10%">Credit</th>
         </tr>
         <?php
+		$total_sale = dofetch(doquery("select sum(amount), b.title as title, c.title as details  from transaction a left join account b on a.reference_id = b.id left join account c on a.account_id = c.id where datetime_added BETWEEN '".date('Y-m-d',strtotime(date_dbconvert($date)))." 00:00:00' AND '".date('Y-m-d',strtotime(date_dbconvert($date)))." 23:59:59' and reference_id = '".get_config("dailysale_customer_id")."'", $dblink));
+		$sn=1;
+		?>
+		<tr>
+            <td class="text-center"><?php echo $sn++;?></td>
+            <td><?php echo $date; ?></td>
+            <td><?php echo unslash($total_sale["title"]); ?></td>
+            <td><?php echo unslash($total_sale["details"]); ?></td>
+            <td class="text-right"><?php echo curr_format($total_sale["sum(amount)"]); ?></td>
+            <td class="text-right">0</td>
+        </tr>
+		<?php
 		$transactions = array();
-		$transactions[] = "select 3 as position, a.datetime_added, b.title, if(details='', concat( 'Transfer to account ', title ), details) as details, 0 as debit, amount as credit from transaction a left join account b on a.reference_id = b.id where a.status=1";
+		$transactions[] = "select 3 as position, a.datetime_added, b.title, if(details='', concat( 'Transfer to account ', title ), details) as details, 0 as debit, amount as credit from transaction a left join account b on a.reference_id = b.id where a.status=1 and a.reference_id <> '".get_config("dailysale_customer_id")."'";
 		
-		$transactions[] = "select 1 as position, a.datetime_added, b.title,  if(details='', concat( 'Transfer from account ', title ), details) as details, amount as debit, 0 as credit from transaction a left join account b on a.account_id = b.id where a.status=1 and a.reference_id != '".get_config("dailysale_customer_id")."'";
+		$transactions[] = "select 1 as position, a.datetime_added, b.title,  if(details='', concat( 'Transfer from account ', title ), details) as details, amount as debit, 0 as credit from transaction a left join account b on a.account_id = b.id where a.status=1 and a.reference_id <> '".get_config("dailysale_customer_id")."'";
 		
 		$transactions[] = "select 2 as position, a.datetime_added, concat('Expense: ', b.title ), details, amount as debit, 0 as credit from expense a left join expense_category b on a.expense_category_id = b.id where a.status=1";
 		
