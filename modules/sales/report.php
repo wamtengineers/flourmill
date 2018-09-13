@@ -84,7 +84,6 @@ table {
             $total_items += $r["total_items"];
             $total_price += $r["total_price"];
             $payment_amount += $r["amount"];
-			
             ?>
             <tr>
                 <td style="text-align:center"><?php echo $sn++?></td>

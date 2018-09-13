@@ -289,7 +289,7 @@ table {
 		$transactions = array();
 		$transactions[] = "select 3 as position, a.datetime_added, b.title, if(details='', concat( 'Transfer to account ', title ), details) as details, 0 as debit, amount as credit from transaction a left join account b on a.reference_id = b.id where a.status=1";
 		
-		$transactions[] = "select 1 as position, a.datetime_added, b.title,  if(details='', concat( 'Transfer from account ', title ), details) as details, amount as debit, 0 as credit from transaction a left join account b on a.account_id = b.id where a.status=1";
+		$transactions[] = "select 1 as position, a.datetime_added, b.title,  if(details='', concat( 'Transfer from account ', title ), details) as details, amount as debit, 0 as credit from transaction a left join account b on a.account_id = b.id where a.status=1 and a.reference_id != '".get_config("dailysale_customer_id")."'";
 		
 		$transactions[] = "select 2 as position, a.datetime_added, concat('Expense: ', b.title ), details, amount as debit, 0 as credit from expense a left join expense_category b on a.expense_category_id = b.id where a.status=1";
 		
