@@ -37,7 +37,7 @@ table {
 <body>
 <table width="100%" cellspacing="0" cellpadding="0">
 	<tr class="head">
-        <th colspan="10">
+        <th colspan="11">
             <h1><?php echo get_config( 'site_title' )?></h1>
             <h2>SALES LIST</h2>
             <p>
@@ -71,6 +71,7 @@ table {
         <th width="15%">Customer Name</th>
         <th width="15%">Items</th>
         <th width="8%">Packing</th>
+        <th width="10%" style="text-align:right;">Rate</th>
         <th width="10%" style="text-align:right;">Total Items</th>
         <th width="10%" style="text-align:right;">Total Price</th>
         <th width="10%" style="text-align:right;">Payment Amount</th>
@@ -101,6 +102,7 @@ table {
 						 }
 					?>
                 </td>
+                <td style="text-align:right;"><?php echo curr_format($r["unit_price"]); ?></td>
                 <td style="text-align:right;"><?php echo curr_format($r["total_items"]); ?></td>
                 <td style="text-align:right;"><?php echo curr_format($r["total_price"]); ?></td>
                 <td style="text-align:right;"><?php echo curr_format($r["amount"]); ?></td> 
@@ -129,7 +131,7 @@ table {
     }
     ?>
     <tr>
-        <th colspan="6" style="text-align:right;">Total</th>
+        <th colspan="7" style="text-align:right;">Total</th>
         <th style="text-align:right;"><?php echo curr_format($total_items);?></th>
         <th style="text-align:right;"><?php echo curr_format($total_price);?></th>
         <th style="text-align:right;"><?php echo curr_format($payment_amount);?></th>
