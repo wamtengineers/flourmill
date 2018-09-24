@@ -88,16 +88,17 @@ table {
 			$credit_total += $r["credit"];           
 				?>
 				<tr>
-					<td class="text-center"><?php echo $sn++;?></td>
+					<td class="text-center"><?php echo $sn;?></td>
 					<td><?php echo datetime_convert($r["datetime_added"]); ?></td>
 					<td><?php echo unslash($r["details"]); ?></td>
                     <?php
 						if($r["type"]==0){
-							$sales = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales` a left join sales_items b on b.sales_id = a.id left join items c on b.item_id = c.id where a.id='".$r["id"]."'",$dblink));
+							$sales = doquery("SELECT a.*, group_concat(concat(b.quantity) SEPARATOR '<br>') as quantity, ' x ',  group_concat(concat(c.title, b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `sales` a left join sales_items b on a.id = b.sales_id left join items c on b.item_id = c.id where a.id='".$r["id"]."' ",$dblink);
+							$sale=dofetch($sales);
 							?>
-                            <td><?php echo unslash($sales[ "title" ])."-".curr_format($sales[ "packing" ])."Kg";?></td>
-                            <td align="right"><?php echo $sales[ "quantity" ];?></td>
-                            <td align="right"><?php echo curr_format($sales[ "unit_price" ]);?></td>
+                            <td><?php echo unslash($sale[ "items" ]);?></td>
+                            <td align="right"><?php echo $sale[ "quantity" ];?></td>
+                            <td align="right"><?php echo $sale[ "item_price" ];?></td>
                         	<?php
 						}
 						elseif($r["type"]==1){

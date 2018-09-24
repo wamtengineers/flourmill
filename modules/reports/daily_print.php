@@ -50,7 +50,7 @@ table {
             </th>
         </tr>
         <tr>
-            <th colspan="11">SALES</th>
+            <th colspan="12">SALES</th>
         </tr>
         <tr>
             <th width="5%" style="text-align:center">S#</th>
@@ -58,11 +58,12 @@ table {
             <th width="10%">Token Number</th>
             <th width="15%">Customer Name</th>
             <th width="15%">Items</th>
-            <th width="8%">Packing</th>
+            <th width="8%" style="text-align:right;">Packing</th>
+            <th width="8%" style="text-align:right;">Quantity</th>
             <th width="10%" style="text-align:right;">Rate</th>
-            <th width="10%" style="text-align:right;">Total Items</th>
-            <th width="10%" style="text-align:right;">Total Price</th>
-            <th width="10%" style="text-align:right;">Payment Amount</th>
+            <th width="10%" style="text-align:right;">Total Amount</th>
+            <th width="10%" style="text-align:right;">Grand Total</th>
+            <th width="10%" style="text-align:right;">Total Weight</th>
             <th style="text-align:center;">Status</th>
         </tr>
 		<?php
@@ -81,27 +82,47 @@ table {
                     <td><?php echo get_token_number( $sale ); ?></td>
                     <td style="text-align:left;"><?php echo get_field($sale["account_id"], "account","title");?></td>
                     <td>
-                        <?php echo $sale[ "items" ];?>
-                    </td>
-                    <td style="text-align:right;">
                         <?php 
-                            $packing = doquery("select * from sales_items where sales_id = '".$sale["id"]."'", $dblink);
-                             while($pack=dofetch($packing)){
-                                echo curr_format($pack["packing"]). " KG". " , ";
+                            $items = doquery("select a.*, b.title from sales_items a left join items b on a.item_id = b.id where sales_id = '".$sale["id"]."'", $dblink);
+                             while($item=dofetch($items)){
+                                echo unslash($item["title"])." <br>";
                              }
                         ?>
                     </td>
                     <td style="text-align:right;">
                     	<?php 
-                            $rate = doquery("select unit_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
-                             while($rate=dofetch($rate)){
-                                echo curr_format($rate["unit_price"])." <br>";
+                            $packing = doquery("select a.* from sales_items a left join items b on a.item_id = b.id where sales_id = '".$sale["id"]."'", $dblink);
+                             while($pack=dofetch($packing)){
+                                echo $pack["packing"]." <br>";
                              }
                         ?>
                     </td>
-                    <td style="text-align:right;"><?php echo curr_format($sale["total_items"]); ?></td>
-                    <td style="text-align:right;"><?php echo curr_format($sale["total_price"]); ?></td>
+                    <td style="text-align:right;">
+                    	<?php 
+                            $quantity = doquery("select quantity-less_weight as item_quantity from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($qty=dofetch($quantity)){
+                                echo $qty["item_quantity"]." <br>";
+                             }
+                        ?>
+                    </td>
+                    <td style="text-align:right;">
+                    	<?php 
+                            $rates = doquery("select unit_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($rate=dofetch($rates)){
+                                echo number_format(abs($rate["unit_price"]), 2, '.',',')." <br>";
+                             }
+                        ?>
+                    </td>
+                    <td style="text-align:right;">
+                    	<?php 
+                            $items_price = doquery("select total_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($item_price=dofetch($items_price)){
+                                echo curr_format($item_price["total_price"])." <br>";
+                             }
+                        ?>
+                    </td>
                     <td style="text-align:right;"><?php echo curr_format($sale["amount"]); ?></td> 
+                    <td style="text-align:right;"><?php echo $sale["total_items"]; ?></td> 
                     <td class="text-center">
                         <?php
                         if($sale["status"]==0){
@@ -127,14 +148,14 @@ table {
     	}
     	?>
          <tr>
-            <th colspan="7" style="text-align:right;">Total</th>
-            <th style="text-align:right;"><?php echo curr_format($total_items);?></th>
+            <th colspan="8" style="text-align:right;">Total</th>
             <th style="text-align:right;"><?php echo curr_format($total_price);?></th>
             <th style="text-align:right;"><?php echo curr_format($payment_amount);?></th>
+            <th style="text-align:right;"><?php echo curr_format($total_items);?></th> 
             <th></th>
         </tr>
         <tr>
-            <th colspan="11">CREDIT SALES</th>
+            <th colspan="12">CREDIT SALES</th>
         </tr>
         <tr>
             <th width="5%" style="text-align:center">S#</th>
@@ -142,11 +163,12 @@ table {
             <th width="10%">Token Number</th>
             <th width="15%">Customer Name</th>
             <th width="15%">Items</th>
-            <th width="8%">Packing</th>
+            <th width="8%" style="text-align:right;">Packing</th>
+            <th width="8%" style="text-align:right;">Quantity</th>
             <th width="10%" style="text-align:right;">Rate</th>
-            <th width="10%" style="text-align:right;">Total Items</th>
-            <th width="10%" style="text-align:right;">Total Price</th>
-            <th width="10%" style="text-align:right;">Payment Amount</th>
+            <th width="10%" style="text-align:right;">Total Amount</th>
+            <th width="10%" style="text-align:right;">Grand Total</th>
+            <th width="10%" style="text-align:right;">Total Weight</th>
             <th style="text-align:center;">Status</th>
         </tr>
 		<?php
@@ -165,27 +187,47 @@ table {
                     <td><?php echo get_token_number( $sale ); ?></td>
                     <td style="text-align:left;"><?php echo get_field($sale["account_id"], "account","title");?></td>
                     <td>
-                        <?php echo $sale[ "items" ];?>
-                    </td>
-                    <td style="text-align:right;">
                         <?php 
-                            $packing = doquery("select * from sales_items where sales_id = '".$sale["id"]."'", $dblink);
-                             while($pack=dofetch($packing)){
-                                echo curr_format($pack["packing"]). " KG". " <br> ";
+                            $items = doquery("select a.*, b.title from sales_items a left join items b on a.item_id = b.id where sales_id = '".$sale["id"]."'", $dblink);
+                             while($item=dofetch($items)){
+                                echo unslash($item["title"])." <br>";
                              }
                         ?>
                     </td>
                     <td style="text-align:right;">
                     	<?php 
-                            $rate = doquery("select unit_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
-                             while($rate=dofetch($rate)){
-                                echo curr_format($rate["unit_price"])." <br>";
+                            $packing = doquery("select a.* from sales_items a left join items b on a.item_id = b.id where sales_id = '".$sale["id"]."'", $dblink);
+                             while($pack=dofetch($packing)){
+                                echo $pack["packing"]." <br>";
                              }
                         ?>
                     </td>
-                    <td style="text-align:right;"><?php echo curr_format($sale["total_items"]); ?></td>
-                    <td style="text-align:right;"><?php echo curr_format($sale["total_price"]); ?></td>
+                    <td style="text-align:right;">
+                    	<?php 
+                            $quantity = doquery("select quantity-less_weight as item_quantity from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($qty=dofetch($quantity)){
+                                echo $qty["item_quantity"]." <br>";
+                             }
+                        ?>
+                    </td>
+                    <td style="text-align:right;">
+                    	<?php 
+                            $rates = doquery("select unit_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($rate=dofetch($rates)){
+                                echo number_format(abs($rate["unit_price"]), 2, '.',',')." <br>";
+                             }
+                        ?>
+                    </td>
+                    <td style="text-align:right;">
+                    	<?php 
+                            $items_price = doquery("select total_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
+                             while($item_price=dofetch($items_price)){
+                                echo curr_format($item_price["total_price"])." <br>";
+                             }
+                        ?>
+                    </td>
                     <td style="text-align:right;"><?php echo curr_format($sale["amount"]); ?></td> 
+                    <td style="text-align:right;"><?php echo $sale["total_items"]; ?></td> 
                     <td style="text-align:center">
                         <?php
                         if($sale["status"]==0){
@@ -211,10 +253,10 @@ table {
     	}
     	?>
          <tr>
-            <th colspan="7" style="text-align:right;">Total</th>
-            <th style="text-align:right;"><?php echo curr_format($total_items);?></th>
+            <th colspan="8" style="text-align:right;">Total</th>
             <th style="text-align:right;"><?php echo curr_format($total_price);?></th>
             <th style="text-align:right;"><?php echo curr_format($payment_amount);?></th>
+            <th style="text-align:right;"><?php echo curr_format($total_items);?></th>
             <th></th>
         </tr>
   	</table>

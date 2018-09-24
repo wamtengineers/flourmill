@@ -20,10 +20,10 @@ if(!defined("APP_START")) die("No Direct Access");
         <div>
         	<form class="form-horizontal" action="" method="get">
                 <div class="col-sm-2">
-                    <input type="text" placeholder="Enter Date From" name="date_from" id="date_from" class="form-control date-timepicker"  value="<?php echo $date_from?>" >
+                    <input type="text" placeholder="Enter Date From" name="date_from" id="date_from" class="form-control datepicker"  value="<?php echo $date_from?>" >
                 </div>
                 <div class="col-sm-2">
-                    <input type="text" placeholder="Enter Date To" name="date_to" id="date_to" class="form-control date-timepicker" value="<?php echo $date_to?>" >
+                    <input type="text" placeholder="Enter Date To" name="date_to" id="date_to" class="form-control datepicker" value="<?php echo $date_to?>" >
                 </div>
                 <div class="col-sm-2">
                   	<select name="account_id" class="searchbox">

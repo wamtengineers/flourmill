@@ -74,6 +74,22 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			"amount": "",
 			"details": "",
 		};
+		$scope.new_transaction = {
+			"id": "",
+			"datetime_added": "",
+			"account_id": "",
+			"reference_id": "",
+			"amount": "",
+			"details": "",
+		};
+		$scope.new_expense = {
+			"id": "",
+			"datetime_added": "",
+			"details": "",
+			"amount": "",
+			"account_id": "",
+			"expense_category_id": ""
+		};
 		$scope.sales_revalidate_placeholder = {
 			"id": "",
 			"sales_id": "",
@@ -289,7 +305,7 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			$scope.wctAJAX( {action: 'get_expense_category'}, function( response ){
 				$scope.expense_categories = response;
 			});
-			$scope.wctAJAX( {action: 'get_transactions', dt: $scope.dt}, function( response ){
+			$scope.wctAJAX( {action: 'get_transaction', dt: $scope.dt}, function( response ){
 				$scope.transactions = response;
 			});
 			$scope.wctAJAX( {action: 'get_expense', dt: $scope.dt}, function( response ){
@@ -340,21 +356,35 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 				}
 			}
 		}
+		$scope.get_expense_category = function( id ) {
+			var r = $filter('filter')( $scope.expense_categories, {id: id}, true);
+			if( r.length > 0 ) {
+				return r[0].title;
+			}
+		}
+		$scope.get_account = function( id ) {
+			var r = $filter('filter')( $scope.accounts, {id: id}, true);
+			if( r.length > 0 ) {
+				return r[0].title;
+			}
+		}
 		$scope.add_expense = function(){
 			if( $scope.processing == false ) {
-				if( $scope.expense.expense_category_id == "" || $scope.expense.account_id == "" || $scope.expense.amount <= 0 ){
-					alert("Enter Category, Account and Amount.");
+				if( $scope.new_expense.expense_category_id == "" || $scope.new_expense.account_id == "" || $scope.new_expense.amount <= 0 ){
+					alert("Enter Expense Category, Account and Amount.");
 				}
 				else{
 					$scope.processing = true;
-					$scope.wctAJAX( {action: 'add_expense', expense: JSON.stringify($scope.expense)}, function( response ){
+					$scope.wctAJAX( {action: 'add_expense', expense: JSON.stringify($scope.new_expense)}, function( response ){
 						$scope.processing = false;
 						if( response.status == 1 ) {
-							if( !$scope.expense.id ){
-								$scope.expense.unshift(response.expense);
-							}
-							$scope.expenses = angular.copy( $scope.expense_placeholder );
-														
+							$scope.new_expense = {
+								"details": "",
+								"amount": 0,
+								"account_id": "",
+								"expense_category_id": ""
+							};
+							$scope.expenses.unshift(response.expense);
 						}
 						else{
 							alert(response.message);
@@ -363,30 +393,63 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 				}
 			}
 		}
+		$scope.edit_expense = function( $index ){
+			$scope.new_expense = $scope.expenses[ $index ];
+			
+		}
+		$scope.delete_expense = function( $index ){
+			if( confirm( "Confirm Delete?" ) ){
+				$scope.wctAJAX( {action: 'delete_expense', id: $scope.expenses[$index].id }, function(){});
+				$scope.expenses.splice( $index, 1 );
+			}
+		}
+		$scope.expense_total = function(){
+			total = 0;
+			for( i = 0; i < $scope.expenses.length; i++ ) {
+				total += Number( $scope.expenses[ i ].amount );
+			}
+			return total;
+		}
+		$scope.transaction_total = function(){
+			total = 0;
+			for( i = 0; i < $scope.transactions.length; i++ ) {
+				total += Number( $scope.transactions[ i ].amount );
+			}
+			return total;
+		}
 		$scope.add_transaction = function(){
 			if( $scope.processing == false ) {
-				if( $scope.transaction.reference_id == "" || $scope.transaction.account_id == "" || $scope.transaction.amount <= 0 ){
+				if( $scope.new_transaction.reference_id == "" || $scope.new_transaction.account_id == ""){
 					alert("Enter Account and Amount.");
-				}
-				if( $scope.transaction.amount <= 0 ){
-					alert("Enter Amount.");
 				}
 				else{
 					$scope.processing = true;
-					$scope.wctAJAX( {action: 'add_transaction', transaction: JSON.stringify($scope.transaction)}, function( response ){
+					$scope.wctAJAX( {action: 'add_transaction', transaction: JSON.stringify($scope.new_transaction)}, function( response ){
 						$scope.processing = false;
 						if( response.status == 1 ) {
-							if( !$scope.transaction.id ){
-								$scope.transaction.unshift(response.transaction);
-							}
-							$scope.transactions = angular.copy( $scope.transaction_placeholder );
-														
+							$scope.new_transaction = {
+								"details": "",
+								"amount": 0,
+								"account_id": "",
+								"reference_id": ""
+							};
+							$scope.transactions.unshift(response.transaction);
 						}
 						else{
 							alert(response.message);
 						}
 					});	
 				}
+			}
+		}
+		$scope.edit_transaction = function( $index ){
+			$scope.new_transaction = $scope.transactions[ $index ];
+			
+		}
+		$scope.delete_transaction = function( $index ){
+			if( confirm( "Confirm Delete?" ) ){
+				$scope.wctAJAX( {action: 'delete_transaction', id: $scope.transactions[$index].id }, function(){});
+				$scope.transactions.splice( $index, 1 );
 			}
 		}
 		$scope.set_status = function( order_id, status, module ) {

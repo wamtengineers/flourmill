@@ -81,7 +81,7 @@ if(isset($_POST["action"])){
 					if( numrows( $expense ) > 0 ) {
 						$expense = dofetch( $expense );
 						$addedit[ "brokery_id" ] = $expense[ "id" ];
-						$addedit[ "broker_id" ] = $expense[ "account_id" ];
+						$addedit[ "broker_id" ] = $expense[ "reference_id" ];
 						$addedit[ "broker_amount" ] = $expense[ "amount" ];
 					}
 				}

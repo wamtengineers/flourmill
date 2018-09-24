@@ -25,7 +25,7 @@ if(isset($_SESSION["purchase"]["list"]["date_from"]))
 else
 	$date_from="";
 if($date_from != ""){
-	$extra.=" and a.datetime_added>='".datetime_dbconvert($date_from)."'";
+	$extra.=" and a.datetime_added>='".date_dbconvert($date_from)."'";
 	$is_search=true;
 }
 if(isset($_GET["date_to"])){
@@ -37,7 +37,7 @@ if(isset($_SESSION["purchase"]["list"]["date_to"]))
 else
 	$date_to="";
 if($date_to != ""){
-	$extra.=" and a.datetime_added<'".datetime_dbconvert($date_to)."'";
+	$extra.=" and a.datetime_added<'".date_dbconvert($date_to)."'";
 	$is_search=true;
 }
 if(isset($_GET["account_id"])){
@@ -75,7 +75,7 @@ if(isset($_SESSION["purchase"]["list"]["q"]))
 else
 	$q="";
 if(!empty($q)){
-	$extra.=" and (title like '%".$q."%' or items like '%".$q."%')";
+	$extra.=" and (title like '%".$q."%' or id like '%".$q."%')";
 	$is_search=true;
 }
 $order_by = "a.datetime_added";

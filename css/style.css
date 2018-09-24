@@ -5298,3 +5298,8 @@ table.order-item-table input, table.order-item-table select {
     height:  50px;
     line-height: 50px;
 }
+#total-expense .icons {
+    margin: 0 2px;
+    cursor: pointer;
+    font-size: 14px;
+}

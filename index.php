@@ -20,6 +20,7 @@ $page="index";
                 	<label>Revalidate Number</label>
                     <input ng-model="sale_revalidate.sales_id" type="text" style="vertical-align:top">
                     <button type="submit" ng-click="save_revalidate_sale()" class="btn btn-default btn-l">Submit</button>
+                    <a href="report_manage.php?tab=daily_print" class="btn btn-default btn-l">Print</a>
                 </li>
             </ol>
             <div class="wct_tabs_container">
@@ -287,8 +288,8 @@ $page="index";
                                                     <th colspan="5" class="bg-info padding-8">Transaction</th>
                                                 </tr>
                                                 <tr class="head">
-                                                    <th width="20%">Destination Account</th>
-                                                    <th width="20%">Source Account</th>
+                                                    <th width="20%">Account To</th>
+                                                    <th width="20%">Account From</th>
                                                     <th width="15%" class="text-right">Amount</th>
                                                     <th width="30%" colspan="2">Details</th>
                                                 </tr>
@@ -331,7 +332,7 @@ $page="index";
                                                 </tr>
                                                 <tr class="head">
                                                     <th width="20%">Expense Category</th>
-                                                    <th width="20%">Source Account</th>
+                                                    <th width="20%">Account</th>
                                                     <th width="15%" class="text-right">Amount</th>
                                                     <th width="30%" colspan="2">Details</th>
                                                 </tr>
@@ -367,7 +368,67 @@ $page="index";
                             <div class="row">
                                 <div class="col-md-12">
                                     <div id="total-expense" class="expense-form">
-                                        <table width="100%" class="table table-hover list" ng-init="cnt=1;">
+                                    	<table width="100%" class="table table-hover list">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="7" class="bg-info padding-8">Transaction</th>
+                                                </tr>
+                                                <tr class="head">
+                                                    <th width="5%" class="text-center">SN</th>
+                                                    <th width="10%">Time</th>
+                                                    <th width="20%">Account To</th>
+                                                    <th width="20%">Account From</th>
+                                                    <th width="10%" class="text-right">Amount</th>
+                                                    <th width="30%">Details</th>
+                                                    <th width="5%">Actions</th>
+                                                </tr>
+                                            </thead>
+                                             <tr ng-repeat="transaction in transactions">
+                                             	<td class="text-center">{{ $index+1 }}</td>
+                                                <td>{{ transaction.datetime_added }}</td>
+                                                <td>{{ get_account( transaction.account_id ) }}</td>
+                                                <td>{{ get_account( transaction.reference_id ) }}</td>
+                                                <td class="text-right">{{ transaction.amount|currency:'Rs. ':0 }}</td>
+                                                <td>{{ transaction.details }}</td>
+                                                <td class="text-center"><a ng-click="edit_transaction( $index )" class="icons edit"><i class="fa fa-pencil"></i></a> <a ng-click="delete_transaction( $index )" class="icons delete"><i class="fa fa-close"></i></a></td>
+                                                <tr>
+                                                    <th colspan="4" class="text-right">Total</th>
+                                                    <th class="text-right">{{transaction_total() |currency:'Rs. ':0}}</th>
+                                                    <th colspan="2"></th>
+                                                </tr>
+                                            </tr>
+                                        </table>
+                                        <table width="100%" class="table table-hover list">
+                                        	<thead>
+                                                <tr class="bg-info padding-8">
+                                                    <th colspan="7" class="bg-info padding-8">Expense</th>
+                                                </tr>
+                                                <tr class="head">
+                                                    <th width="3%" class="text-center">SN</th>
+                                                    <th width="13%">Time</th>
+                                                    <th width="22%">Expense Category</th>
+                                                    <th width="25%">Details</th>
+                                                    <th width="15%" class="text-right">Amount</th>
+                                                    <th width="20%">Paid By</th>
+                                                    <th class="text-center" width="5%">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tr ng-repeat="expense in expenses">
+                                            	<td class="text-center">{{ $index+1 }}</td>
+                                                <td>{{ expense.datetime_added }}</td>
+                                                <td>{{ get_expense_category( expense.expense_category_id ) }}</td>
+                                                <td>{{ expense.details }}</td>
+                                                <td class="text-right">{{ expense.amount|currency:'Rs. ':0 }}</td>
+                                                <td>{{ get_account( expense.account_id ) }}</td>
+                                                <td class="text-center"><a ng-click="edit_expense( $index )" class="icons edit"><i class="fa fa-pencil"></i></a> <a ng-click="delete_expense( $index )" class="icons delete"><i class="fa fa-close"></i></a></td>
+                                            </tr>
+                                            <tr>
+                                            	<th colspan="4" class="text-right">Total</th>
+                                                <th class="text-right">{{expense_total() |currency:'Rs. ':0}}</th>
+                                                <th colspan="2"></th>
+                                            </tr>
+                                        </table>
+                                        <!--<table width="100%" class="table table-hover list" ng-init="cnt=1;">
                                             <thead>
                                                 <tr>
                                                     <th colspan="7" class="bg-info padding-8">Cashbook</th>
@@ -404,9 +465,9 @@ $page="index";
                                                 <td>Sales</td>
                                                 <td class="text-right">{{ account.total|currency:"":0 }}</td>
                                                 <td class="text-right">--</td>
-                                                <!--<td class="text-right">{{ petty_cash.balance+total_price( sales_orders )-total_price( sales_orders|filter:{status: 0}:1 ) - sum_dynamic( credit_accounts.sales, $index, 'total' ) + sum_dynamic( credit_accounts.sales, $index, 'payment' )|currency:"":0 }}</td>-->
+                                                <td class="text-right">{{ petty_cash.balance+total_price( sales_orders )-total_price( sales_orders|filter:{status: 0}:1 ) - sum_dynamic( credit_accounts.sales, $index, 'total' ) + sum_dynamic( credit_accounts.sales, $index, 'payment' )|currency:"":0 }}</td>
                                             </tr>
-                                        </table>
+                                        </table>-->
                                     </div>
                                 </div>
                             </div>
