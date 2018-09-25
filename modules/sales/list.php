@@ -19,10 +19,10 @@ if(!defined("APP_START")) die("No Direct Access");
 	<li class="col-xs-12 col-lg-12 col-sm-12">
         <div>
         	<form class="form-horizontal" action="" method="get">
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <input type="text" placeholder="Enter Date From" name="date_from" id="date_from" class="form-control datepicker"  value="<?php echo $date_from?>" >
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <input type="text" placeholder="Enter Date To" name="date_to" id="date_to" class="form-control datepicker" value="<?php echo $date_to?>" >
                 </div>
                 <div class="col-sm-2">
@@ -92,10 +92,12 @@ if(!defined("APP_START")) die("No Direct Access");
                 <th width="10%">Token Number</th>
                 <th>Customer Name</th>
                 <th>Items</th>
-                <th class="text-right">Total KG</th>
+                <th class="text-right">Packing</th>
+                <th class="text-right">Quantity</th>
+                <th class="text-right">Rate</th>
                 <th class="text-right">
                 	<a href="sales_manage.php?order_by=total_price&order=<?php echo $order=="asc"?"desc":"asc"?>" class="sorting">
-                		Total Price
+                		Total Amount
                         <?php
                             if( $order_by == "total_price" ) {
                                 ?>
@@ -107,7 +109,8 @@ if(!defined("APP_START")) die("No Direct Access");
                             ?>
                     </a>
                 </th>
-                <th class="text-right">Payment Amount</th>
+                <th class="text-right">Grand Total</th>
+        		<th class="text-right">Total Weight</th>
                 <th class="text-center">Status</th>
                 <th class="text-center">Actions</th>
             </tr>
@@ -129,11 +132,47 @@ if(!defined("APP_START")) die("No Direct Access");
                         <td><?php echo $r[ "id" ]//get_token_number( $r ); ?></td>
                         <td><?php echo unslash( $r[ "customer" ] ); ?></td>
                         <td>
-                        	<?php echo $r[ "items" ];?>
+                        	<?php 
+								$items = doquery("select a.*, b.title from sales_items a left join items b on a.item_id = b.id where sales_id = '".$r["id"]."'", $dblink);
+								 while($item=dofetch($items)){
+									echo unslash($item["title"])." <br>";
+								 }
+							?>
                         </td>
-                        <td class="text-right"><?php echo curr_format($r["total_items"]); ?></td>
-                        <td class="text-right"><?php echo curr_format($r["total_price"]); ?></td>                        
-                        <td class="text-right"><?php echo curr_format($r["amount"]); ?></td>                        
+                        <td class="text-right">
+							<?php 
+                                $packing = doquery("select a.* from sales_items a left join items b on a.item_id = b.id where sales_id = '".$r["id"]."'", $dblink);
+                                 while($pack=dofetch($packing)){
+                                    echo $pack["packing"]." <br>";
+                                 }
+                            ?>
+                        </td>
+                        <td class="text-right">
+                        	<?php 
+								$quantity = doquery("select quantity-less_weight as item_quantity from sales_items where sales_id = '".$r["id"]."'", $dblink);
+								 while($qty=dofetch($quantity)){
+									echo $qty["item_quantity"]." <br>";
+								 }
+							?>
+                        </td>
+                        <td class="text-right">
+							<?php 
+                                $rates = doquery("select unit_price from sales_items where sales_id = '".$r["id"]."'", $dblink);
+                                 while($rate=dofetch($rates)){
+                                    echo number_format(abs($rate["unit_price"]), 2, '.',',')." <br>";
+                                 }
+                            ?>
+                        </td>
+                        <td class="text-right">
+                        	<?php 
+								$items_price = doquery("select total_price from sales_items where sales_id = '".$r["id"]."'", $dblink);
+								 while($item_price=dofetch($items_price)){
+									echo curr_format($item_price["total_price"])." <br>";
+								 }
+							?>
+                        </td>                        
+                        <td class="text-right"><?php echo curr_format($r["amount"]); ?></td>    
+                        <td class="text-right"><?php echo curr_format($r["total_items"]); ?></td>                     
                         <td class="text-center">
                         	<?php
 							if($r["status"]==0){
@@ -175,7 +214,7 @@ if(!defined("APP_START")) die("No Direct Access");
                 }
                 ?>
                 <tr>
-                    <td colspan="6" class="actions">
+                    <td colspan="8" class="actions">
                         <select name="bulk_action" id="bulk_action" title="Choose Action">
                             <option value="null">Bulk Action</option>
                             <option value="delete">Delete</option>
@@ -185,14 +224,14 @@ if(!defined("APP_START")) die("No Direct Access");
                         </select>
                         <input type="button" name="apply" value="Apply" id="apply_bulk_action" class="btn btn-light" title="Apply Action"  />
                     </td>
-                    <td colspan="5" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "sales", $sql, $pageNum)?></td>
+                    <td colspan="6" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "sales", $sql, $pageNum)?></td>
                 </tr>
                 <?php	
             }
             else{	
                 ?>
                 <tr>
-                    <td colspan="11"  class="no-record">No Result Found</td>
+                    <td colspan="14"  class="no-record">No Result Found</td>
                 </tr>
                 <?php
             }

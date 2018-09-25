@@ -49,6 +49,13 @@ if(!defined("APP_START")) die("No Direct Access");
                     </select>
                 </div>
                 <div class="col-sm-2">
+                	<select name="transaction_id" id="transaction_id">
+                    	<option value="">Credit/Cash<?php echo $transaction_id?></option>
+                        <option value="1"<?php echo ($transaction_id=="1")? " selected":"";?>>Cash Purchase</option>
+                        <option value="2"<?php echo ($transaction_id=="2")? " selected":"";?>>Credit Purchase</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
                   <input type="text" title="Enter String" value="<?php echo $q;?>" name="q" id="search" class="form-control" placeholder="Search Customer" >  
                 </div>
                 <div class="col-sm-2 text-left">

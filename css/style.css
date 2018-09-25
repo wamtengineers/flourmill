@@ -5295,11 +5295,23 @@ table.order-item-table input, table.order-item-table select {
 }
 
 .credit-account-selector .chosen-container .chosen-results li {
-    height:  50px;
+    height: 50px;
     line-height: 50px;
 }
 #total-expense .icons {
     margin: 0 2px;
     cursor: pointer;
     font-size: 14px;
+}
+.topstats .chosen-container-multi .chosen-choices{
+	box-shadow: inset 0px 1px 0px #F1F0F1;
+	border-radius: 3px;
+	border: 1px solid #BDC4C9;
+}
+.topstats .chosen-container-multi .chosen-choices li.search-field input[type="text"]{
+	padding: 6px 10px;
+	height: 27px;
+	ine-height: 1.42857;
+	font-size:14px;
+	color:#555;
 }

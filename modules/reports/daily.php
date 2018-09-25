@@ -10,6 +10,33 @@ if(isset($_SESSION["reports"]["daily"]["date"]))
 	$date=$_SESSION["reports"]["daily"]["date"];
 else
 	$date=date("d/m/Y");
+if(isset($_GET["account_id"])){
+	$account_id=slash($_GET["account_id"]);
+	$_SESSION["reports"]["daily"]["account_id"]=$account_id;
+}
+if(isset($_SESSION["reports"]["daily"]["account_id"]))
+	$account_id=$_SESSION["reports"]["daily"]["account_id"];
+else
+	$account_id="";
+if( !empty( $account_id ) ) {
+	$account = dofetch( doquery( "select * from account where id='".$account_id."'", $dblink ) );
+}
+$order_by = "datetime_added";
+$order = "desc";
+if( isset($_GET["order_by"]) ){
+	$_SESSION["reports"]["daily"]["order_by"]=slash($_GET["order_by"]);
+}
+if( isset( $_SESSION["reports"]["daily"]["order_by"] ) ){
+	$order_by = $_SESSION["reports"]["daily"]["order_by"];
+}
+if( isset($_GET["order"]) ){
+	$_SESSION["reports"]["daily"]["order"]=slash($_GET["order"]);
+}
+if( isset( $_SESSION["reports"]["daily"]["order"] ) ){
+	$order = $_SESSION["reports"]["daily"]["order"];
+}
+$orderby = $order_by." ".$order;
+$main_sql = array();
 ?>
 <style>
 h1, h2, h3, p {
@@ -64,6 +91,7 @@ table {
                 <div class="col-sm-2">
                 	<input type="text" title="Enter Date From" name="date" id="date" placeholder="" class="form-control date-picker"  value="<?php echo $date?>">
                 </div>
+                
                 <div class="col-sm-3 text-left">
                     <input type="button" class="btn btn-danger btn-l reset_search" value="Reset" alt="Reset Record" title="Reset Record" />
                     <input type="submit" class="btn btn-default btn-l" value="Search" alt="Search Record" title="Search Record" />
@@ -151,7 +179,7 @@ table {
                     	<?php 
                             $items_price = doquery("select total_price from sales_items where sales_id = '".$sale["id"]."'", $dblink);
                              while($item_price=dofetch($items_price)){
-                                echo curr_format($item_price["total_price"])." <br>";
+                                echo number_format(abs($item_price["total_price"]), 2, '.',',')." <br>";
                              }
                         ?>
                     </td>
@@ -408,7 +436,7 @@ table {
             <th style="text-align:right;"><?php echo curr_format($balance_total);?></th>
         </tr>
 	</table>
-    <table class="table table-hover list">
+    <!--<table class="table table-hover list">
         <tr>
             <th colspan="7">Transaction</th>
         </tr>
@@ -463,6 +491,92 @@ table {
             }
         }
         ?>
-	</table>
+	</table>-->
+    <?php
+	
+    $main_sql[] = "select datetime_added, if(details='', concat( 'Paid ', title ), concat(title, ': ', details)) as details, 0 as debit, amount as credit from expense a left join expense_category b on a.expense_category_id=b.id where a.status=1 and account_id='".$account_id."'";
+$main_sql[] = "select datetime_added, if(details='', concat( 'Transfer from account ', title ), details) as details, amount as debit, 0 as credit from transaction a left join account b on a.reference_id=b.id where a.status=1 and account_id='".$account_id."'";
+$main_sql[] = "select datetime_added, if(details='', concat( 'Transfer to account ', title ), concat(title, ': ', details)) as details, 0 as debit, amount as credit from transaction a left join account b on a.account_id=b.id where a.status=1 and reference_id='".$account_id."'";
+$main_sql="(".implode( ' union ', $main_sql ).") as total_records";
+$sql = "select * from ".$main_sql." where datetime_added BETWEEN '".date('Y-m-d',strtotime(date_dbconvert($date)))." 00:00:00' AND '".date('Y-m-d',strtotime(date_dbconvert($date)))." 23:59:59' order by $orderby";
+$balance = dofetch( doquery( "select sum(debit)-sum(credit) as balance from ".$main_sql." where datetime_added < '".date('Y-m-d',strtotime(date_dbconvert($date)))." 00:00:00'", $dblink ) );
+if( $order == 'desc' ) {
+	$balance = get_account_balance( $account_id, date_dbconvert($date)." 23:59:59" );
+}
+else{
+	$balance = get_account_balance( $account_id, date_dbconvert($date) );
+}
+	?>
+    <table class="table table-hover list">
+    	<thead>
+            <tr>
+                <th width="5%" class="text-center">S.no</th>
+                <th>
+                	<a href="report_manage.php?tab=daily&order_by=datetime_added&order=<?php echo $order=="asc"?"desc":"asc"?>" class="sorting">
+                    	Date
+                        <?php
+						if( $order_by == "datetime_added" ) {
+							?>
+							<span class="sort-icon">
+								<i class="fa fa-angle-<?php echo $order=="asc"?"up":"down"?>" data-hover_in="<?php echo $order=="asc"?"down":"up"?>" data-hover_out="<?php echo $order=="desc"?"down":"up"?>" aria-hidden="true"></i>
+							</span>
+							<?php
+						}
+						?>
+                  	</a>
+                </th>
+                <th>Details</th>
+                <th class="text-right">Debit</th>
+                <th class="text-right" >Credit</th>
+                <th class="text-right" >Balance</th>
+            </tr>
+    	</thead>
+    	<tbody>
+			<?php 
+            $rs=doquery($sql, $dblink);
+            if(numrows($rs)>0){
+                $sn=1;
+				?>
+				<tr>
+                	<td colspan="2"></td>
+                    <td><?php echo $order == 'desc'?'Closing':'Opening'?> Balance</td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right"><?php echo curr_format( $balance )?></td>
+                </tr>
+				<?php
+				while($r=dofetch($rs)){             
+                    ?>
+                    <tr>
+                        <td class="text-center"><?php echo $sn;?></td>
+                        <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
+                        <td><?php echo unslash($r["details"]); ?></td>
+                        <td class="text-right"><?php echo curr_format($r["debit"]); ?></td>
+                        <td class="text-right"><?php echo curr_format($r["credit"]); ?></td>
+                        <td class="text-right"><?php if($order == 'asc'){$balance += ($r["debit"]-$r["credit"])*($order == 'desc'?'-1':1);} echo curr_format( $balance ); if($order == 'desc'){$balance += ($r["debit"]-$r["credit"])*($order == 'desc'?'-1':1);} ?></td>
+                    </tr>
+                    <?php 
+                    $sn++;
+                }
+				?>
+				<tr>
+                	<td colspan="2"></td>
+                    <td><?php echo $order != 'desc'?'Closing':'Opening'?> Balance</td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right"><?php echo curr_format( $balance )?></td>
+                </tr>
+                <?php	
+            }
+            else{	
+                ?>
+                <tr>
+                    <td colspan="6"  class="no-record">No Result Found</td>
+                </tr>
+                <?php
+            }
+            ?>
+    	</tbody>
+  	</table>
 </div>
 

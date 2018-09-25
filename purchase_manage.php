@@ -78,6 +78,24 @@ if(!empty($q)){
 	$extra.=" and (title like '%".$q."%' or id like '%".$q."%')";
 	$is_search=true;
 }
+if(isset($_GET["transaction_id"])){
+	$_SESSION["purchase"]["list"]["transaction_id"]=$_GET[ "transaction_id" ];
+}
+if(isset($_SESSION["purchase"]["list"]["transaction_id"])){
+	$transaction_id=$_SESSION["purchase"]["list"]["transaction_id"];
+}
+else{
+	$transaction_id="";
+}	
+if(!empty($transaction_id)){
+	if( $transaction_id==1 ){
+		$extra.=" and transaction_id <> 0";
+	}
+	else{
+		$extra.=" and transaction_id = 0";
+	}
+	$is_search=true;
+}
 $order_by = "a.datetime_added";
 $order = "desc";
 if( isset($_GET["order_by"]) ){
