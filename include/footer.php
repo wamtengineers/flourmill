@@ -84,10 +84,8 @@ $(document).scannerDetection({
     }
 });
 </script>
-<script src="js/jquery.UrduEditor.js" type="text/javascript"></script>    
 <script>
 $(document).ready(function() {    
-    $('#name_in_urdu_text').UrduEditor("14px");   
 	$(".sorting").hover(function(){
 	  $icon=$(this).find(".sort-icon i");
 	  $icon.removeClass("fa-angle-"+$icon.data("hover_out")).addClass("fa-angle-"+$icon.data("hover_in"))
@@ -99,18 +97,6 @@ $(document).ready(function() {
 		$form = $(this).parents("form");
 		$form.find('input[type=text], select, textarea').val('');
 		$form.submit();
-	});
-	$(".barcode_print_button").click(function(e){
-		e.preventDefault();
-		$a = $(this);
-		$copies = prompt("Number of Copies (Multiple of 2)", "1");
-		if($copies > 0)
-		{
-			$("<iframe>")
-			.hide()
-			.attr("src", $a.attr("href")+"&copies="+$copies)
-			.appendTo("body"); 
-		}
 	});
 }); 
 </script>  

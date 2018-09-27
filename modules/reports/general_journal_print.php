@@ -58,14 +58,14 @@ table {
     </tr>
     <tr>
         <th width="5%" align="center">S.no</th>
-        <th>Date</th>
-        <th>Details</th>
-        <th>Items</th>
-        <th align="right">Bags</th>
-        <th align="right">Rate</th>
-        <th align="right">Debit</th>
-        <th align="right">Credit</th>
-        <th align="right">Balance</th>
+        <th width="10%">Date</th>
+        <th width="25%">Details</th>
+        <th width="10%">Items</th>
+        <th width="10%" align="right">Bags</th>
+        <th width="10%" align="right">Rate</th>
+        <th width="10%" align="right">Debit</th>
+        <th width="10%" align="right">Credit</th>
+        <th width="10%" align="right">Balance</th>
     </tr>
     <tbody>
 		<?php
@@ -88,12 +88,12 @@ table {
 			$credit_total += $r["credit"];           
 				?>
 				<tr>
-					<td class="text-center"><?php echo $sn;?></td>
-					<td><?php echo datetime_convert($r["datetime_added"]); ?></td>
+					<td align="center"><?php echo $sn;?></td>
+					<td><?php echo date_convert($r["datetime_added"]); ?></td>
 					<td><?php echo unslash($r["details"]); ?></td>
                     <?php
 						if($r["type"]==0){
-							$sales = doquery("SELECT a.*, group_concat(concat(b.quantity) SEPARATOR '<br>') as quantity, ' x ',  group_concat(concat(c.title, b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `sales` a left join sales_items b on a.id = b.sales_id left join items c on b.item_id = c.id where a.id='".$r["id"]."' ",$dblink);
+							$sales = doquery("SELECT a.*, group_concat(concat(b.quantity) SEPARATOR '<br>') as quantity, ' x ',  group_concat(concat(c.title, '-', b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `sales` a left join sales_items b on a.id = b.sales_id left join items c on b.item_id = c.id where a.id='".$r["id"]."' ",$dblink);
 							$sale=dofetch($sales);
 							?>
                             <td><?php echo unslash($sale[ "items" ]);?></td>
@@ -102,27 +102,30 @@ table {
                         	<?php
 						}
 						elseif($r["type"]==1){
-							$sales_return = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `sales_return` a left join sales_return_items b on b.sales_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink));
+							$sales_return = doquery("SELECT a.*, group_concat(concat(b.quantity) SEPARATOR '<br>') as quantity, ' x ',  group_concat(concat(c.title, '-', b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `sales_return` a left join sales_return_items b on a.id = b.sales_return_id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
+							$sale_return=dofetch($sales_return);
 							?>
-                            <td><?php echo unslash($sales_return[ "title" ])."-".curr_format($sales_return[ "packing" ])."Kg";?></td>
-                            <td align="right"><?php echo $sales_return[ "quantity" ];?></td>
-                            <td align="right"><?php echo curr_format($sales_return[ "unit_price" ]);?></td>
+                            <td><?php echo unslash($sale_return[ "items" ]);?></td>
+                            <td align="right"><?php echo $sale_return[ "quantity" ];?></td>
+                            <td align="right"><?php echo $sale_return[ "item_price" ];?></td>
                         	<?php
 						}               
 						elseif($r["type"]==2){
-							$purchase = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `purchase` a left join purchase_items b on b.purchase_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink));
+							$purchases = doquery("SELECT a.*, group_concat(concat(b.quantity-b.less_weight)) as net_weight, group_concat(concat(c.title, '-', b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `purchase` a left join purchase_items b on b.purchase_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
+							$purchase=dofetch($purchases);
 							?>
-                            <td><?php echo unslash($purchase[ "title" ])."-".curr_format($purchase[ "packing" ])."Kg";?></td>
-                            <td align="right"><?php echo $purchase[ "quantity" ];?></td>
-                            <td align="right"><?php echo curr_format($purchase[ "unit_price" ]);?></td>
+                            <td><?php echo unslash($purchase[ "items" ]);?></td>
+                            <td align="right"><?php echo $purchase[ "net_weight" ];?></td>
+                            <td align="right"><?php echo $purchase[ "item_price" ];?></td>
                         	<?php
 						}
 						elseif($r["type"]==3){
-							$purchase_return = dofetch(doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `purchase_return` a left join purchase_return_items b on b.purchase_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink));
+							$purchases_return = doquery("SELECT a.*, group_concat(concat(b.quantity-b.less_weight)) as net_weight, group_concat(concat(c.title, '-', b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `purchase_return` a left join purchase_return_items b on b.purchase_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
+							$purchase_return=dofetch($purchases_return);
 							?>
-                        	<td><?php echo unslash($purchase[ "title" ])."-".curr_format($purchase[ "packing" ])."Kg";?></td>
-                            <td align="right"><?php echo $purchase[ "quantity" ];?></td>
-                            <td align="right"><?php echo curr_format($purchase[ "unit_price" ]);?></td>
+                        	<td><?php echo unslash($purchase_return[ "items" ]);?></td>
+                            <td align="right"><?php echo $purchase_return[ "net_weight" ];?></td>
+                            <td align="right"><?php echo $purchase_return[ "item_price" ];?></td>
                        		<?php
 						}
 						else{

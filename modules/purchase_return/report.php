@@ -76,7 +76,7 @@ table {
             ?>
             <tr>
                 <td style="text-align:center"><?php echo $sn++?></td>
-                <td style="text-align:left;"><?php echo datetime_convert($r["datetime_added"]); ?></td>
+                <td style="text-align:left;"><?php echo date_convert($r["datetime_added"]); ?></td>
                 <td><?php echo get_token_number( $r ); ?></td>
                 <td style="text-align:left;"><?php echo get_field($r["account_id"], "account","title");?></td>
                 <td>

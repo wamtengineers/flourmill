@@ -6,7 +6,7 @@ include("include/paging.php");
 define("APP_START", 1);
 $filename = 'sales_manage.php';
 include("include/admin_type_access.php");
-$tab_array=array("daily", "general_journal","balance_sheet","general_journal_print", "income", "income_print", "trial_balance", "trial_balance_print","daily_print", "cashbook");
+$tab_array=array("daily", "general_journal","balance_sheet","general_journal_print", "income", "income_print", "daily_print");
 if(isset($_REQUEST["tab"]) && in_array($_REQUEST["tab"], $tab_array)){
 	$tab=$_REQUEST["tab"];
 }
@@ -24,14 +24,8 @@ switch($tab){
 	case 'income_print':
 		include("modules/reports/income_print.php");
 	break;
-	case 'trial_balance_print':
-		include("modules/reports/trial_balance_print.php");
-	break;
 	case 'daily_print':
 		include("modules/reports/daily_print.php");
-	break;
-	case 'cashbook':
-		include("modules/reports/cashbook_do.php");
 	break;
 }
 ?>
@@ -43,9 +37,6 @@ switch($tab){
 			case 'daily':
 				include("modules/reports/daily.php");
 			break;
-			case 'income':
-				include("modules/reports/income.php");
-			break;
 			case 'general_journal':
 				include("modules/reports/general_journal.php");
 			break;
@@ -55,12 +46,8 @@ switch($tab){
 			case 'income':
 				include("modules/reports/income.php");
 			break;
-			case 'trial_balance':
-				include("modules/reports/trial_balance.php");
-			break;
-			case 'cashbook':
-				include("modules/reports/cashbook.php");
-			break;
+			
+			
 		}
       ?>
     </div>

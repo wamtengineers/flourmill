@@ -55,7 +55,7 @@ if(!defined("APP_START")) die("No Direct Access");
     	<thead>
             <tr>
                 <th width="5%" class="text-center">S.no</th>
-                <th>
+                <th width="10%">
                 	<a href="report_manage.php?tab=general_journal&order_by=datetime_added&order=<?php echo $order=="asc"?"desc":"asc"?>" class="sorting">
                     	Date
                         <?php
@@ -69,13 +69,13 @@ if(!defined("APP_START")) die("No Direct Access");
 						?>
                   	</a>
                 </th>
-                <th>Details</th>
-                <th>Items</th>
-                <th class="text-right">Bags</th>
-                <th class="text-right">Rate</th>
-                <th class="text-right">Debit</th>
-                <th class="text-right" >Credit</th>
-                <th class="text-right" >Balance</th>
+                <th width="25%">Details</th>
+                <th width="10%">Items</th>
+                <th width="10%" class="text-right">Bags</th>
+                <th width="10%" class="text-right">Rate</th>
+                <th width="10%" class="text-right">Debit</th>
+                <th width="10%" class="text-right" >Credit</th>
+                <th width="10%" class="text-right" >Balance</th>
             </tr>
     	</thead>
     	<tbody>
@@ -99,11 +99,11 @@ if(!defined("APP_START")) die("No Direct Access");
 	                ?>
                     <tr>
                         <td class="text-center"><?php echo $sn;?></td>
-                        <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
+                        <td><?php echo date_convert($r["datetime_added"]); ?></td>
                         <td><?php echo unslash($r["details"]); ?></td>
                         <?php
 						if($r["type"]==0){
-							$sales = doquery("SELECT a.*, group_concat(concat(b.quantity) SEPARATOR '<br>') as quantity, ' x ',  group_concat(concat(c.title, b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `sales` a left join sales_items b on a.id = b.sales_id left join items c on b.item_id = c.id where a.id='".$r["id"]."' ",$dblink);
+							$sales = doquery("SELECT a.*, group_concat(concat(b.quantity) SEPARATOR '<br>') as quantity, ' x ',  group_concat(concat(c.title, '-', b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `sales` a left join sales_items b on a.id = b.sales_id left join items c on b.item_id = c.id where a.id='".$r["id"]."' ",$dblink);
 							$sale=dofetch($sales);
 							?>
                             <td><?php echo unslash($sale[ "items" ]);?></td>
@@ -112,32 +112,32 @@ if(!defined("APP_START")) die("No Direct Access");
                         	<?php
 						}
 						elseif($r["type"]==1){
-							$sales_return = doquery("SELECT a.*, group_concat(concat(b.quantity) SEPARATOR '<br>') as quantity, ' x ',  group_concat(concat(c.title, b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `sales_return` a left join sales_return_items b on a.id = b.sales_return_id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
+							$sales_return = doquery("SELECT a.*, group_concat(concat(b.quantity) SEPARATOR '<br>') as quantity, ' x ',  group_concat(concat(c.title, '-', b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `sales_return` a left join sales_return_items b on a.id = b.sales_return_id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
 							$sale_return=dofetch($sales_return);
 							?>
                             <td><?php echo unslash($sale_return[ "items" ]);?></td>
                             <td class="text-right"><?php echo $sale_return[ "quantity" ];?></td>
-                            <td class="text-right"><?php echo curr_format($sale_return[ "item_price" ]);?></td>
+                            <td class="text-right"><?php echo $sale_return[ "item_price" ];?></td>
                         	<?php
 							
 						}               
 						elseif($r["type"]==2){
-							$purchases = doquery("SELECT a.*, b.quantity-b.less_weight as net_weight, b.packing, b.unit_price, c.title FROM `purchase` a left join purchase_items b on b.purchase_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
+							$purchases = doquery("SELECT a.*, group_concat(concat(b.quantity-b.less_weight)) as net_weight, group_concat(concat(c.title, '-', b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `purchase` a left join purchase_items b on b.purchase_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
 							$purchase=dofetch($purchases);
 							?>
-                            <td><?php echo unslash($purchase[ "title" ])."-".curr_format($purchase[ "packing" ])."Kg";?></td>
+                            <td><?php echo unslash($purchase[ "items" ]);?></td>
                             <td class="text-right"><?php echo $purchase[ "net_weight" ];?></td>
-                            <td class="text-right"><?php echo curr_format($purchase[ "unit_price" ]);?></td>
+                            <td class="text-right"><?php echo $purchase[ "item_price" ];?></td>
                         	<?php
 							
 						}
 						elseif($r["type"]==3){
-							$purchases_return = doquery("SELECT a.*, b.quantity, b.packing, b.unit_price, c.title FROM `purchase_return` a left join purchase_return_items b on b.purchase_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
+							$purchases_return = doquery("SELECT a.*, group_concat(concat(b.quantity-b.less_weight)) as net_weight, group_concat(concat(c.title, '-', b.packing) SEPARATOR '<br>') as items, group_concat(concat(b.unit_price)SEPARATOR '<br>') as item_price FROM `purchase_return` a left join purchase_return_items b on b.purchase_return_id = a.id left join items c on b.item_id = c.id where a.id = '".$r["id"]."'",$dblink);
 							$purchase_return=dofetch($purchases_return);
 							?>
-                        	<td><?php echo unslash($purchase_return[ "title" ])."-".curr_format($purchase_return[ "packing" ])."Kg";?></td>
-                            <td class="text-right"><?php echo $purchase_return[ "quantity" ];?></td>
-                            <td class="text-right"><?php echo curr_format($purchase_return[ "unit_price" ]);?></td>
+                        	<td><?php echo unslash($purchase_return[ "items" ]);?></td>
+                            <td class="text-right"><?php echo $purchase_return[ "net_weight" ];?></td>
+                            <td class="text-right"><?php echo $purchase_return[ "item_price" ];?></td>
                        		<?php
 							
 						}

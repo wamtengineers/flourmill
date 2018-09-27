@@ -15,7 +15,6 @@ else{
 }
 $q="";
 $extra='';
-$is_search=false;
 if(isset($_GET["date_from"])){
 	$date_from=slash($_GET["date_from"]);
 	$_SESSION["sales_return"]["list"]["date_from"]=$date_from;
@@ -25,7 +24,7 @@ if(isset($_SESSION["sales_return"]["list"]["date_from"]))
 else
 	$date_from="";
 if($date_from != ""){
-	$extra.=" and datetime_added>='".datetime_dbconvert($date_from)."'";
+	$extra.=" and a.datetime_added > '".date('Y-m-d',strtotime(date_dbconvert($date_from)))." 00:00:00'";
 	$is_search=true;
 }
 if(isset($_GET["date_to"])){
@@ -37,7 +36,7 @@ if(isset($_SESSION["sales_return"]["list"]["date_to"]))
 else
 	$date_to="";
 if($date_to != ""){
-	$extra.=" and datetime_added<'".datetime_dbconvert($date_to)."'";
+	$extra.=" and a.datetime_added<'".date('Y-m-d',strtotime(date_dbconvert($date_to)))." 23:59:59'";
 	$is_search=true;
 }
 if(isset($_GET["account_id"])){
@@ -49,21 +48,41 @@ if(isset($_SESSION["sales_return"]["list"]["account_id"]))
 else
 	$account_id="";
 if(!empty($account_id)){
-	$extra.=" and account_id = '".$account_id."'";
+	$extra.=" and a.account_id = '".$account_id."'";
 	$is_search=true;
 }
 if(isset($_GET["status"])){
-	$status=slash($_GET["status"]);
-	$_SESSION["sales_return"]["list"]["status"]=$status;
+	$_SESSION["sales_return"]["list"]["status"]=$_GET[ "status" ];
 }
 if(isset($_SESSION["sales_return"]["list"]["status"])){
 	$status=$_SESSION["sales_return"]["list"]["status"];
 }
 else{
-	$status=1;
+	$status=array();
 }	
-if(($status!= "")){
-	$extra.=" and status='".$status."'";
+if(count( $status ) > 0){
+	$sts = array();
+	foreach( $status as $st )
+		$sts[] = "a.status='".$st."'";
+	$extra .= "and (".implode( " or ", $sts ).")";
+	$is_search=true;
+}
+if(isset($_GET["transaction_id"])){
+	$_SESSION["sales_return"]["list"]["transaction_id"]=$_GET[ "transaction_id" ];
+}
+if(isset($_SESSION["sales_return"]["list"]["transaction_id"])){
+	$transaction_id=$_SESSION["sales_return"]["list"]["transaction_id"];
+}
+else{
+	$transaction_id="";
+}	
+if(!empty($transaction_id)){
+	if( $transaction_id==1 ){
+		$extra.=" and transaction_id <> 0";
+	}
+	else{
+		$extra.=" and transaction_id = 0";
+	}
 	$is_search=true;
 }
 if(isset($_GET["q"])){
@@ -75,10 +94,10 @@ if(isset($_SESSION["sales_return"]["list"]["q"]))
 else
 	$q="";
 if(!empty($q)){
-	$extra.=" and (title like '%".$q."%' or items like '%".$q."%')";
+	$extra.=" and (c.title like '%".$q."%' or a.id like '%".$q."%')";
 	$is_search=true;
 }
-$order_by = "datetime_added";
+$order_by = "a.datetime_added";
 $order = "desc";
 if( isset($_GET["order_by"]) ){
 	$_SESSION["sales_return"]["list"]["order_by"]=slash($_GET["order_by"]);
@@ -93,7 +112,7 @@ if( isset( $_SESSION["sales_return"]["list"]["order"] ) ){
 	$order = $_SESSION["sales_return"]["list"]["order"];
 }
 $orderby = $order_by." ".$order;
-$sql="select * from (select a.*, b.title, amount, (select sum((quantity-less_weight)*if(rate=0,packing,1)) from sales_return_items where sales_return_id = a.id)-less_weight as total_items, (select group_concat(concat(quantity, ' &times ', packing, 'KG ', title) SEPARATOR '<br>') from sales_return_items left join items on sales_return_items.item_id = items.id where sales_return_id = a.id) as items, (select sum(total_price) from sales_return_items where sales_return_id = a.id)-discount as total_price from sales_return a left join account b on a.account_id = b.id left join transaction c on a.transaction_id = c.id ) as temp_table where 1 $extra order by $orderby";
+$sql = "SELECT a.*, d.title as customer, e.amount, sum((b.quantity-b.less_weight)*if(b.rate=0,b.packing,1))-a.less_weight as total_items, group_concat(concat(b.quantity, ' × ', b.packing, 'KG ', c.title) SEPARATOR '<br>') as items, sum(b.total_price)-a.discount as total_price, b.unit_price FROM `sales_return` a left join sales_return_items b on a.id = b.sales_return_id left join items c on b.item_id = c.id left join account d on a.account_id = d.id left join transaction e on a.transaction_id = e.id where 1 $extra group by a.id order by $orderby";
 switch($tab){
 	case 'addedit':
 		include("modules/sales_return/addedit_do.php");

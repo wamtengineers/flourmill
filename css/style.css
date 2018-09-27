@@ -23,7 +23,7 @@
   font-style: normal;
 }
 .assets-list .table-responsive input, .assets-list .table-responsive select {
-    width: 115px;
+    width: 100%;
 }
 .nastaleeq, #name_in_urdu_text{font-family: 'NafeesRegular'; direction:rtl; unicode-bidi: embed;   }
 /* Color Class */

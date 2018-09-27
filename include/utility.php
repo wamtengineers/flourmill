@@ -1313,11 +1313,16 @@ function get_account_balance( $account_id, $datetime = "" ){
 		$datetime = date( "Y-m-d H:i:s" );
 	}
 	$balance = 0;
+	$sales = dofetch( doquery( "select sum(a.total_price) as total from sales_items a left join sales b on a.sales_id = b.id where b.status <> 0 and b.account_id = '".$account_id."' and b.datetime_added<='".$datetime."'", $dblink ) );
+	$balance += $sales[ "total" ];
+	$purchase = dofetch( doquery( "select sum(a.total_price) as total from purchase_items a left join purchase b on a.purchase_id = b.id where b.status <> 0 and b.account_id = '".$account_id."' and b.datetime_added<='".$datetime."'", $dblink ) );
+	$balance += $purchase[ "total" ];
 	$balance_transactions = dofetch( doquery( "select sum(amount) as balance from (SELECT id, amount as amount FROM `transaction` a where a.account_id='".$account_id."' and datetime_added<='".$datetime."' union select id, -amount from transaction b where b.reference_id='".$account_id."' and datetime_added<='".$datetime."') as transactions", $dblink ) );
 	$balance = $balance + $balance_transactions[ "balance" ];
 	$expense = dofetch( doquery( "select sum(amount) as total from expense where status=1 and account_id = '".$account_id."' and datetime_added<='".$datetime."'", $dblink ) );
 	$balance -= $expense[ "total" ];
 	return $balance;
+	
 }
 
 function get_customer_balance( $customer_id, $dt = 0 ){

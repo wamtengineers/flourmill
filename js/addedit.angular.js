@@ -52,6 +52,7 @@ angular.module('addedit', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 				for( i = 0; i < $scope.accounts.length; i++ ) {
 					if( $scope.accounts[ i ].is_petty_cash == 1 ) {
 						$scope.petty_cash = $scope.accounts[ i ];
+						$scope.addedit.payment_account_id = $scope.petty_cash.id
 						//$scope.addedit.payment_account_id = $scope.petty_cash.id
 					}
 				}

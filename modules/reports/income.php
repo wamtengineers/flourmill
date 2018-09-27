@@ -69,13 +69,13 @@ if( empty( $extra ) ) {
 <div class="panel-body table-responsive">
 	<table class="table table-hover list">
     	<?php
-		$sql="select sum(b.total_price)-sum(a.discount) as total from sales a left join sales_items b on a.id = b.sales_id where a.status = 1 $extra";
+		$sql="select sum(b.total_price)-sum(a.discount) as total from sales a left join sales_items b on a.id = b.sales_id where a.status <> 0 $extra";
 		$sale_total=dofetch(doquery($sql, $dblink));
-		$sql="select sum(b.total_price)-sum(a.discount) as total from purchase a left join purchase_items b on a.id = b.purchase_id where a.status = 1 $extra";
+		$sql="select sum(b.total_price)-sum(a.discount) as total from purchase a left join purchase_items b on a.id = b.purchase_id where a.status <> 0 $extra";
 		$purchase_total=dofetch(doquery($sql, $dblink));
-		$sql="select sum(b.total_price)-sum(a.discount) as total from sales_return a left join sales_return_items b on a.id = b.sales_return_id where a.status = 1 $extra";
+		$sql="select sum(b.total_price)-sum(a.discount) as total from sales_return a left join sales_return_items b on a.id = b.sales_return_id where a.status <> 0 $extra";
 		$sale_return_total=dofetch(doquery($sql, $dblink));
-		$sql="select sum(b.total_price)-sum(a.discount) as total from purchase_return a left join purchase_return_items b on a.id = b.purchase_return_id where a.status = 1 $extra";
+		$sql="select sum(b.total_price)-sum(a.discount) as total from purchase_return a left join purchase_return_items b on a.id = b.purchase_return_id where a.status <> 0 $extra";
 		$purchase_return_total=dofetch(doquery($sql, $dblink));
 		?>
         <tr class="head">
@@ -121,7 +121,7 @@ if( empty( $extra ) ) {
         </tr>
         <tr class="head bg-success">
             <th class="text-right">Net Income</th>
-            <th class="text-right" ><?php echo curr_format($sale_total[ "total" ]-$purchase_total[ "total" ]-$total)?></th>
+            <th class="text-right" ><?php echo curr_format($sale_total[ "total" ]-$purchase_total[ "total" ]-$sale_return_total[ "total" ]+$purchase_return_total[ "total" ]-$total)?></th>
         </tr>	
   	</table>
 </div>

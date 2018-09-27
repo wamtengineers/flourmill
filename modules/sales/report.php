@@ -88,7 +88,7 @@ table {
             ?>
             <tr>
                 <td style="text-align:center"><?php echo $sn++?></td>
-                <td style="text-align:left;"><?php echo datetime_convert($r["datetime_added"]); ?></td>
+                <td style="text-align:left;"><?php echo date_convert($r["datetime_added"]); ?></td>
                 <td><?php echo $r[ "id" ]; ?></td>
                 <td style="text-align:left;"><?php echo unslash( $r[ "customer" ] ); ?></td>
                 <td>
@@ -111,7 +111,7 @@ table {
                 	<?php 
 						$quantity = doquery("select quantity-less_weight as item_quantity from sales_items where sales_id = '".$r["id"]."'", $dblink);
 						 while($qty=dofetch($quantity)){
-							echo $qty["item_quantity"]." <br>";
+							echo round($qty["item_quantity"],2)." <br>";
 						 }
 					?>
                 </td>
@@ -119,7 +119,7 @@ table {
                 	<?php 
 						$rates = doquery("select unit_price from sales_items where sales_id = '".$r["id"]."'", $dblink);
 						 while($rate=dofetch($rates)){
-							echo number_format(abs($rate["unit_price"]), 2, '.',',')." <br>";
+							echo round($rate["unit_price"],2)." <br>";
 						 }
 					?>
                 </td>
@@ -127,12 +127,12 @@ table {
                 	<?php 
 						$items_price = doquery("select total_price from sales_items where sales_id = '".$r["id"]."'", $dblink);
 						 while($item_price=dofetch($items_price)){
-							echo curr_format($item_price["total_price"])." <br>";
+							echo round($item_price["total_price"],2)." <br>";
 						 }
 					?>
                 </td>
-                <td style="text-align:right;"><?php echo curr_format($r["amount"]); ?></td>
-                <td style="text-align:right;"><?php echo curr_format($r["total_items"]); ?></td> 
+                <td style="text-align:right;"><?php echo round($r["amount"],2); ?></td>
+                <td style="text-align:right;"><?php echo round($r["total_items"],2); ?></td> 
                 <td class="text-center">
 					<?php
                     if($r["status"]==0){

@@ -116,7 +116,7 @@ if(!defined("APP_START")) die("No Direct Access");
                             <input type="checkbox" name="id[]" id="<?php echo "rec_".$sn?>"  value="<?php echo $r["id"]?>" title="Select Record" />
                             <label for="<?php echo "rec_".$sn?>"></label></div>
                         </td>
-                        <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
+                        <td><?php echo date_convert($r["datetime_added"]); ?></td>
                         <td><?php echo get_token_number( $r ); ?></td>
                         <td><?php echo get_field($r["account_id"], "account","title"); ?></td>
                         <td>

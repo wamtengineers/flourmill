@@ -474,7 +474,7 @@ angular.module('pos', ['ngAnimate', 'angularMoment', 'localytics.directives']).c
 			var total = 0;
 			for( var i =0; i < $scope.sales_revalidate.items.length; i++ ) {
 				
-					total += Number( $scope.sales_revalidate.items[ i ].total_price );
+					total += Number( $scope.sales_revalidate.items[ i ].total );
 			}
 			return total;
 		}

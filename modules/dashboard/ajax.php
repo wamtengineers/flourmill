@@ -170,50 +170,44 @@ if( count( $_POST ) > 0 ) {
 					doquery( "update ".($update_order[ "cnf" ]==1?"expense":"transaction")." set status='".$status."' where id = '".$update_order[ "fare_transaction_id" ]."'", $dblink );
 				}
 			break;
+			
 			case "get_sales_revalidate":
-				$rs = doquery( "select a.id, a.sales_id, a.revalidated_by, a.ts from sales_revalidate a left join admin b on a.revalidated_by = b.id where ts>'".$from."' and ts<='".$to."' order by ts desc, id desc", $dblink );
+				$sale_revalidate = dofetch(doquery( "select a.id, a.sales_id, a.revalidated_by, a.ts, c.transaction_id from sales_revalidate a left join admin b on a.revalidated_by = b.id left join sales c on a.sales_id = c.id where a.ts>'".$from."' and a.ts<='".$to."' order by a.ts desc, id desc", $dblink ));
 				$payment_account_id = "";
 				$payment_amount = 0;
-				if( !empty( $order[ "transaction_id" ] ) ) {
-					$transaction = doquery( "select * from transaction where id = '".$order[ "transaction_id" ]."'", $dblink );
+				if( !empty( $sale_revalidate[ "transaction_id" ] ) ) {
+					$transaction = doquery( "select * from transaction where id = '".$sale_revalidate[ "transaction_id" ]."'", $dblink );
 					if( numrows( $transaction ) > 0 ) {
 						$transaction = dofetch( $transaction );
-							$payment_account_id = $transaction[ "account_id" ];
-							$payment_amount = $transaction[ "amount" ];
+						$payment_account_id = $transaction[ "account_id" ];
+						$payment_amount = $transaction[ "amount" ];
 					}
 				}
-				$sale_revalidate = array();
+				$sale_revalidate = array(
+					"id" => $sale_revalidate["id"],
+					"sales_id" => $sale_revalidate[ "sales_id" ],
+					"revalidated_by" => $sale_revalidate[ "revalidated_by" ],
+					"items" => array()
+				);
+				//$items = array();
+				$rs = doquery( "select a.*, b.title from sales_items a inner join items b on a.item_id = b.id where sales_id='".$sale_revalidate["sales_id"]."' order by b.sortorder desc", $dblink );
 				if( numrows( $rs ) > 0 ) {
-					$r = dofetch( $rs ) ;
-					$sale_revalidate[] = array(
-						"id" => $r["id"],
-						"sales_id" => $r[ "sales_id" ],
-						"revalidated_by" => $r[ "revalidated_by" ],
-						"payment_account_id" => $payment_account_id,
-						"payment_amount" => $payment_amount,
-						"items" => array()
-					);
-					
-					$items = array();
-					$rs = doquery( "select a.*, b.title from sales_items a inner join items b on a.item_id = b.id where sales_id='".$r["sales_id"]."' order by b.sortorder desc", $dblink );
-					if( numrows( $rs ) > 0 ) {
-						while( $r = dofetch( $rs ) ) {
-							$items[] = array(
-								"title" => unslash( $r[ "title" ] ),
-								"id" => $r["id"],
-								"sales_id" => $r[ "sales_id" ],
-								"item_id" => $r["item_id"],
-								"packing" => $r["packing"],
-								"quantity" => $r[ "quantity" ],
-								"less_weight" => $r[ "less_weight" ],
-								"unit_price" => $r[ "unit_price" ],
-								"rate" => $r[ "rate" ],
-								"total" => $r[ "total_price" ],
-							);
-						}
+					while( $r = dofetch( $rs ) ) {
+						$sale_revalidate["items"][] = array(
+							"title" => unslash( $r[ "title" ] ),
+							"id" => $r["id"],
+							"sales_id" => $r[ "sales_id" ],
+							"item_id" => $r["item_id"],
+							"packing" => $r["packing"],
+							"quantity" => $r[ "quantity" ],
+							"less_weight" => $r[ "less_weight" ],
+							"unit_price" => $r[ "unit_price" ],
+							"rate" => $r[ "rate" ],
+							"total" => $r[ "total_price" ],
+						);
 					}
-					$sale_revalidate[ "items" ] = $items;
 				}
+				//$sale_revalidate[ "items" ] = $items;
 				$response = $sale_revalidate;
 			break;
 			case "save_revalidate_sale":

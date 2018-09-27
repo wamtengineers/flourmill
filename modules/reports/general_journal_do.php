@@ -47,13 +47,13 @@ if( isset( $_SESSION["reports"]["general_journal"]["order"] ) ){
 }
 $orderby = $order_by." ".$order;
 $main_sql = array();
-$main_sql[] = "select datetime_added, a.id, 0 as type, group_concat(concat( 'Sales #', a.id)) as details, sum(c.total_price)-a.discount as debit, 0 as credit from sales a left join account b on a.account_id=b.id left join sales_items c on a.id=c.sales_id where a.status <> 0 and account_id='".$account_id."' group by a.id";
+$main_sql[] = "select datetime_added, a.id, 0 as type, concat( 'Sales #', ' ', a.id) as details, sum(c.total_price)-a.discount as debit, 0 as credit from sales a left join account b on a.account_id=b.id left join sales_items c on a.id=c.sales_id where a.status <> 0 and account_id='".$account_id."' group by a.id";
 
-$main_sql[] = "select datetime_added, a.id, 1 as type, concat( 'Sales Return #', a.id) as details, 0 as debit, sum(c.total_price)-a.discount as credit from sales_return a left join account b on a.account_id=b.id left join sales_return_items c on a.id=c.sales_return_id where a.status <> 0 and account_id='".$account_id."'";
+$main_sql[] = "select datetime_added, a.id, 1 as type, concat( 'Sales Return #', ' ', a.id) as details, 0 as debit, sum(c.total_price)-a.discount as credit from sales_return a left join account b on a.account_id=b.id left join sales_return_items c on a.id=c.sales_return_id where a.status <> 0 and account_id='".$account_id."'";
 
-$main_sql[] = "select datetime_added, a.id, 2 as type, concat( 'Purchase #', a.id) as details, 0 as debit, sum(c.total_price)-a.discount as credit from purchase a left join account b on a.account_id=b.id left join purchase_items c on a.id=c.purchase_id where a.status <> 0 and account_id='".$account_id."'";
+$main_sql[] = "select datetime_added, a.id, 2 as type, concat( 'Purchase #', ' ', a.id) as details, 0 as debit, c.total_price-a.discount as credit from purchase a left join account b on a.account_id=b.id left join purchase_items c on a.id=c.purchase_id where a.status <> 0 and account_id='".$account_id."'";
 
-$main_sql[] = "select datetime_added, a.id, 3 as type, concat( 'Purchase Return #', a.id) as details, sum(c.total_price)-a.discount as debit, 0 as credit from purchase_return a left join account b on a.account_id=b.id left join purchase_return_items c on a.id=c.purchase_return_id where a.status <> 0 and account_id='".$account_id."'";
+$main_sql[] = "select datetime_added, a.id, 3 as type, concat( 'Purchase Return #', ' ', a.id) as details, c.total_price-a.discount as debit, 0 as credit from purchase_return a left join account b on a.account_id=b.id left join purchase_return_items c on a.id=c.purchase_return_id where a.status <> 0 and account_id='".$account_id."'";
 
 $main_sql[] = "select datetime_added, a.id, 4 as type, if(details='', concat( 'Transfer to account ', title ), concat(title, ': ', details)) as details, amount as debit, amount as credit from transaction a left join account b on a.account_id=b.id where a.status = 1 and account_id = reference_id and reference_id='".$account_id."'";
 
@@ -66,7 +66,7 @@ $main_sql[] = "select datetime_added, a.id, 7 as type, if(details='', concat( 'E
 $main_sql="(".implode( ' union ', $main_sql ).") as total_records";
 $sql = "select * from ".$main_sql." where 1 $extra order by $orderby";
 
-$balance = dofetch( doquery( "select sum(debit)-sum(credit) as balance from ".$main_sql." where datetime_added < '".date('Y-m-d',strtotime(date_dbconvert($date_from)))." 00:00:00'", $dblink ) );
+//$balance = dofetch( doquery( "select sum(debit)-sum(credit) as balance from ".$main_sql." where datetime_added < '".date('Y-m-d',strtotime(date_dbconvert($date_from)))." 00:00:00'", $dblink ) );
 if( $order == 'desc' ) {
 	$balance = get_account_balance( $account_id, date_dbconvert($date_to)." 23:59:59" );
 }

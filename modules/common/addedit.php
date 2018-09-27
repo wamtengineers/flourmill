@@ -219,12 +219,14 @@ else {
                                         	<table class="table table-hover list">
                                                 <tr>
                                                     <th>Payment Account</th>
-                                                    <td><select class="margin-btm-5" ng-model="addedit.payment_account_id" chosen>
-                                                        <option value="0">Select Account</option>
-                                                        <optgroup ng-repeat="account_type in account_types" label="{{ account_type.title }}">
-                                                            <option ng-repeat="account in accounts|filter:{account_type_id: account_type.id}:1" value="{{account.id}}">{{account.title}}</option>
-                                                        </optgroup>
-                                   					</select></td>
+                                                    <td>
+                                                        <select class="margin-btm-5" ng-model="addedit.payment_account_id" chosen>
+                                                            <option value="0">Select Account</option>
+                                                            <optgroup ng-repeat="account_type in account_types" label="{{ account_type.title }}">
+                                                                <option ng-repeat="account in accounts|filter:{account_type_id: account_type.id}:1" value="{{account.id}}">{{account.title}}</option>
+                                                            </optgroup>
+                                                        </select>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <th>Payment Amount <i class="fa fa-refresh" ng-click="addedit.payment_amount=grand_total()-addedit.discount"></i></th>

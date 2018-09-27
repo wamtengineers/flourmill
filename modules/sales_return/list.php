@@ -15,15 +15,15 @@ if(!defined("APP_START")) die("No Direct Access");
         </div>
   	</div>
 </div>
-<ul class="topstats clearfix search_filter"<?php if($is_search) echo ' style="display: block"';?>>
+<ul class="topstats clearfix search_filter" style="display:block;">
 	<li class="col-xs-12 col-lg-12 col-sm-12">
         <div>
         	<form class="form-horizontal" action="" method="get">
-                <div class="col-sm-2">
-                    <input type="text" placeholder="Enter Date From" name="date_from" id="date_from" class="form-control date-timepicker"  value="<?php echo $date_from?>" >
+                <div class="col-sm-1">
+                    <input type="text" placeholder="Enter Date From" name="date_from" id="date_from" class="form-control datepicker"  value="<?php echo $date_from?>" >
                 </div>
-                <div class="col-sm-2">
-                    <input type="text" placeholder="Enter Date To" name="date_to" id="date_to" class="form-control date-timepicker" value="<?php echo $date_to?>" >
+                <div class="col-sm-1">
+                    <input type="text" placeholder="Enter Date To" name="date_to" id="date_to" class="form-control datepicker" value="<?php echo $date_to?>" >
                 </div>
                 <div class="col-sm-2">
                   	<select name="account_id" class="searchbox">
@@ -41,11 +41,19 @@ if(!defined("APP_START")) die("No Direct Access");
                     </select>
                 </div>
                 <div class="col-sm-2">
-                	<select name="status" id="status" class="custom_select">
-                    	<option value="1"<?php echo ($status=="1")? " selected":"";?>>Arrived</option>
-                    	<option value="2"<?php echo ($status=="2")? " selected":"";?>>Receiving</option>
-                        
-                        <option value="0"<?php echo ($status=="0")? " selected":"";?>>Cancelled</option>
+                	<select name="status[]" id="status" class="searchbox" multiple>
+                    	<option value="1"<?php echo in_array( "1", $status)? " selected":"";?>>Dispatched</option>
+                    	<option value="2"<?php echo in_array( "2", $status)? " selected":"";?>>Delivering</option>
+                        <option value="3"<?php echo in_array( "3", $status)? " selected":"";?>>Delivered</option>
+                        <option value="4"<?php echo in_array( "4", $status)? " selected":"";?>>On Hold</option>
+                        <option value="0"<?php echo in_array( "5", $status)? " selected":"";?>>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                	<select name="transaction_id" id="transaction_id">
+                    	<option value="">Credit/Cash<?php echo $transaction_id?></option>
+                        <option value="1"<?php echo ($transaction_id=="1")? " selected":"";?>>Cash Sale Return</option>
+                        <option value="2"<?php echo ($transaction_id=="2")? " selected":"";?>>Credit Sale Return</option>
                     </select>
                 </div>
                 <div class="col-sm-2">
@@ -67,7 +75,7 @@ if(!defined("APP_START")) die("No Direct Access");
                 <th class="text-center" width="5%"><div class="checkbox checkbox-primary">
                     <input type="checkbox" id="select_all" value="0" title="Select All Records">
                     <label for="select_all"></label></div></th>
-                <th width="10%">
+                <th>
                 	<a href="sales_return_manage.php?order_by=datetime_added&order=<?php echo $order=="asc"?"desc":"asc"?>" class="sorting">
                         Date
                         <?php
@@ -81,12 +89,15 @@ if(!defined("APP_START")) die("No Direct Access");
                             ?>
  					</a>
                 </th>
-                <th width="15%">Customer Name</th>
-                <th width="15%">Items</th>
-                <th width="10%" class="text-right">Total KG</th>
-                <th width="10%" class="text-right">
+                <th width="10%">Token Number</th>
+                <th>Customer Name</th>
+                <th>Items</th>
+                <th class="text-right">Packing</th>
+                <th class="text-right">Quantity</th>
+                <th class="text-right">Rate</th>
+                <th class="text-right">
                 	<a href="sales_return_manage.php?order_by=total_price&order=<?php echo $order=="asc"?"desc":"asc"?>" class="sorting">
-                		Total Price
+                		Total Amount
                         <?php
                             if( $order_by == "total_price" ) {
                                 ?>
@@ -98,9 +109,10 @@ if(!defined("APP_START")) die("No Direct Access");
                             ?>
                     </a>
                 </th>
-                <th width="10%" class="text-right">Payment Amount</th>
-                <th width="5%" class="text-center">Status</th>
-                <th width="5%" class="text-center">Actions</th>
+                <th class="text-right">Grand Total</th>
+        		<th class="text-right">Total Weight</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Actions</th>
             </tr>
     	</thead>
     	<tbody>
@@ -116,15 +128,53 @@ if(!defined("APP_START")) die("No Direct Access");
                             <input type="checkbox" name="id[]" id="<?php echo "rec_".$sn?>"  value="<?php echo $r["id"]?>" title="Select Record" />
                             <label for="<?php echo "rec_".$sn?>"></label></div>
                         </td>
-                        <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
-                        <td><?php echo get_field($r["account_id"], "account","title"); ?></td>
+                        <td><?php echo date_convert($r["datetime_added"]); ?></td>
+                        <td><?php echo $r[ "id" ]//get_token_number( $r ); ?></td>
+                        <td><?php echo unslash( $r[ "customer" ] ); ?></td>
                         <td>
-                        	<?php echo $r[ "items" ];?>
+                        	<?php 
+								$items = doquery("select a.*, b.title from sales_return_items a left join items b on a.item_id = b.id where sales_return_id = '".$r["id"]."'", $dblink);
+								 while($item=dofetch($items)){
+									echo unslash($item["title"])." <br>";
+								 }
+							?>
                         </td>
-                        <td class="text-right"><?php echo curr_format($r["total_items"]); ?></td>
-                        <td class="text-right"><?php echo curr_format($r["total_price"]); ?></td>                        
-                        <td class="text-right"><?php echo curr_format($r["amount"]); ?></td>                        
-                        <td class="text-center"><?php
+                        <td class="text-right">
+							<?php 
+                                $packing = doquery("select a.* from sales_return_items a left join items b on a.item_id = b.id where sales_return_id = '".$r["id"]."'", $dblink);
+                                 while($pack=dofetch($packing)){
+                                    echo $pack["packing"]." <br>";
+                                 }
+                            ?>
+                        </td>
+                        <td class="text-right">
+                        	<?php 
+								$quantity = doquery("select quantity-less_weight as item_quantity from sales_return_items where sales_return_id = '".$r["id"]."'", $dblink);
+								 while($qty=dofetch($quantity)){
+									echo round($qty["item_quantity"],2)." <br>";
+								 }
+							?>
+                        </td>
+                        <td class="text-right">
+							<?php 
+                                $rates = doquery("select unit_price from sales_return_items where sales_return_id = '".$r["id"]."'", $dblink);
+                                 while($rate=dofetch($rates)){
+                                    echo round($rate["unit_price"],2)." <br>";
+                                 }
+                            ?>
+                        </td>
+                        <td class="text-right">
+                        	<?php 
+								$items_price = doquery("select total_price from sales_return_items where sales_return_id = '".$r["id"]."'", $dblink);
+								 while($item_price=dofetch($items_price)){
+									echo round($item_price["total_price"],2)." <br>";
+								 }
+							?>
+                        </td>                        
+                        <td class="text-right"><?php echo curr_format($r["amount"]); ?></td>    
+                        <td class="text-right"><?php echo round($r["total_items"],2); ?></td>                     
+                        <td class="text-center">
+                        	<?php
 							if($r["status"]==0){
 								?>
 								<span class="order-status cancel">Cancelled</span>
@@ -132,15 +182,27 @@ if(!defined("APP_START")) die("No Direct Access");
 							}
 							elseif($r["status"]==1){
 								?>
-								<span class="order-status dispatch">Arrived</span>
+								<span class="order-status dispatch">Dispatched</span>
 								<?php
 							}
 							elseif($r["status"]==2){
 								?>
-								<span class="order-status deliver">Receiving</span>
+								<span class="order-status deliver">Delivering</span>
 								<?php
 							}
-							?></td>
+							elseif($r["status"]==3){
+								?>
+								<span class="order-status delivered">Delivered</span>
+								<?php
+							}
+							elseif($r["status"]==3){
+								?>
+								<span class="order-status onhold">On Hold</span>
+								<?php
+							}
+							?>
+                            
+                        </td>
                         <td class="text-center">
                             <a href="sales_return_manage.php?tab=addedit&id=<?php echo $r['id'];?>"><img title="Edit Record" alt="Edit" src="images/edit.png"></a>&nbsp;&nbsp;
                             <a onclick="return confirm('Are you sure you want to delete')" href="sales_return_manage.php?id=<?php echo $r['id'];?>&amp;tab=delete"><img title="Delete Record" alt="Delete" src="images/delete.png"></a>
@@ -151,7 +213,7 @@ if(!defined("APP_START")) die("No Direct Access");
                 }
                 ?>
                 <tr>
-                    <td colspan="5" class="actions">
+                    <td colspan="8" class="actions">
                         <select name="bulk_action" id="bulk_action" title="Choose Action">
                             <option value="null">Bulk Action</option>
                             <option value="delete">Delete</option>
@@ -160,14 +222,14 @@ if(!defined("APP_START")) die("No Direct Access");
                         </select>
                         <input type="button" name="apply" value="Apply" id="apply_bulk_action" class="btn btn-light" title="Apply Action"  />
                     </td>
-                    <td colspan="5" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "sales_return", $sql, $pageNum)?></td>
+                    <td colspan="6" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "sales_return", $sql, $pageNum)?></td>
                 </tr>
                 <?php	
             }
             else{	
                 ?>
                 <tr>
-                    <td colspan="10"  class="no-record">No Result Found</td>
+                    <td colspan="14"  class="no-record">No Result Found</td>
                 </tr>
                 <?php
             }
